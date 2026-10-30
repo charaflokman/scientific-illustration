@@ -1,0 +1,52 @@
+{
+  "canvas": {"width_mm": 180, "height_mm": 158, "font_pt": 7},
+  "colors": {"matrix": "#56B4E9", "filler": "#E69F00", "coat": "#009E73", "cellc": "#CC79A7", "bact": "#7FB77E", "drug": "#0072B2"},
+  "provenance": "Built from the user's review paragraph on organosilane dispersants in wound dressings (refs [181]-[195]). All drawings are schematic; numbers are only those stated in the text.",
+  "elements": [
+    {"id": "pA", "type": "panel", "x": 2, "y": 2, "w": 87, "h": 62, "letter": "(a)", "title": "With organosilane dispersant [192]", "fill": "#F1F8F5", "title_bar": "#D3ECE2"},
+    {"id": "pB", "type": "panel", "x": 91, "y": 2, "w": 87, "h": 62, "letter": "(b)", "title": "Without dispersant", "fill": "#FDF4EC", "title_bar": "#F8E1CB"},
+
+    {"id": "dressA", "type": "icon", "icon": "skin_wound", "x": 5, "y": 13, "w": 52, "h": 30, "color": "matrix", "accent": "filler",
+     "params": {"particles": 30, "dispersion": "uniform"}, "label": "Uniform filler in the dressing"},
+    {"id": "zoomA", "type": "icon", "icon": "coated_nanoparticle", "x": 64, "y": 12, "w": 20, "h": 20, "color": "coat", "accent": "filler",
+     "label": "Silane-compatibilised particle", "label_width": 26},
+    {"id": "zA", "type": "arrow", "from": "dressA", "to": "zoomA", "style": "dashed"},
+    {"id": "tA", "type": "text", "x": 45.5, "y": 54, "w": 80, "anchor": "middle", "text": "Homogeneous microstructure → consistent properties, reliable and safe dosing [181], [193]"},
+
+    {"id": "dressB", "type": "icon", "icon": "skin_wound", "x": 94, "y": 13, "w": 52, "h": 30, "color": "matrix", "accent": "filler",
+     "params": {"particles": 30, "dispersion": "agglomerated"}, "seed": 4, "label": "Agglomerated filler in the dressing"},
+    {"id": "zoomB", "type": "icon", "icon": "agglomerate", "x": 153, "y": 12, "w": 20, "h": 20, "accent": "filler", "label": "Loose agglomerate", "label_width": 24},
+    {"id": "zB", "type": "arrow", "from": "dressB", "to": "zoomB", "style": "dashed"},
+    {"id": "tB", "type": "text", "x": 134.5, "y": 54, "w": 80, "anchor": "middle", "text": "Poor dispersion is not cosmetic: it creates specific failure modes (c)"},
+
+    {"id": "pC", "type": "panel", "x": 2, "y": 67, "w": 176, "h": 72, "letter": "(c)", "title": "Failure modes of poor dispersion in wound dressings", "fill": "#FAFAFA", "title_bar": "#ECECEC"},
+
+    {"id": "f1", "type": "icon", "icon": "crack", "x": 8, "y": 79, "w": 28, "h": 18, "color": "matrix", "accent": "filler", "label_pos": "none"},
+    {"id": "f1t", "type": "text", "x": 22, "y": 103, "w": 32, "anchor": "middle", "weight": "bold", "text": "1  Stress concentration"},
+    {"id": "f1d", "type": "text", "x": 22, "y": 110, "w": 32, "anchor": "middle", "text": "Agglomerates crack under flexion and on removal [192]"},
+
+    {"id": "f2a", "type": "icon", "icon": "cell", "x": 42, "y": 78, "w": 14, "h": 14, "color": "cellc", "accent": "filler", "params": {"kind": "fibroblast", "state": "damaged"}, "label_pos": "none"},
+    {"id": "f2b", "type": "icon", "icon": "bacterium", "x": 58, "y": 84, "w": 14, "h": 14, "color": "bact", "label_pos": "none"},
+    {"id": "f2t", "type": "text", "x": 57, "y": 103, "w": 33, "anchor": "middle", "weight": "bold", "text": "2  Local over-/under-dosing"},
+    {"id": "f2d", "type": "text", "x": 57, "y": 110, "w": 33, "anchor": "middle", "text": "Cytotoxic zones for fibroblasts and keratinocytes next to zones where bacteria survive"},
+    {"id": "f2n", "type": "text", "x": 57, "y": 127, "w": 33, "anchor": "middle", "font_pt": 6, "italic": true, "color": "#555555", "text": "Ag–bacterial cellulose: ~30 nm, 7.8 wt% Ag → 100% E. coli reduction vs 8–24% otherwise [194]"},
+
+    {"id": "f3", "type": "icon", "icon": "drug_release", "x": 82, "y": 78, "w": 20, "h": 19, "color": "bad", "params": {"kind": "burst"}, "label_pos": "none"},
+    {"id": "f3t", "type": "text", "x": 92, "y": 103, "w": 32, "anchor": "middle", "weight": "bold", "text": "3  Burst release"},
+    {"id": "f3d", "type": "text", "x": 92, "y": 110, "w": 32, "anchor": "middle", "text": "Surface-adsorbed drug leaves first, then levels fall below therapeutic [195]"},
+
+    {"id": "f4", "type": "icon", "icon": "skin_wound", "x": 112, "y": 79, "w": 26, "h": 18, "color": "matrix", "accent": "filler", "params": {"particles": 10, "dispersion": "agglomerated"}, "seed": 9, "label_pos": "none"},
+    {"id": "f4p", "type": "icon", "icon": "nanoparticle", "x": 123, "y": 92, "w": 3.5, "h": 3.5, "accent": "filler", "label_pos": "none"},
+    {"id": "f4t", "type": "text", "x": 126, "y": 103, "w": 32, "anchor": "middle", "weight": "bold", "text": "4  Particle leaching"},
+    {"id": "f4d", "type": "text", "x": 126, "y": 110, "w": 32, "anchor": "middle", "text": "Physically trapped particles detach into exudate and tissue; covalent (metal–thiol) anchoring suppresses release [185]"},
+
+    {"id": "f5", "type": "icon", "icon": "silica_network", "x": 150, "y": 78, "w": 20, "h": 20, "color": "matrix", "accent": "coat", "params": {"coupled": false}, "label_pos": "none"},
+    {"id": "f5t", "type": "text", "x": 160, "y": 103, "w": 32, "anchor": "middle", "weight": "bold", "text": "5  Incongruent dissolution"},
+    {"id": "f5d", "type": "text", "x": 160, "y": 110, "w": 32, "anchor": "middle", "text": "Uncoupled domains dissolve at different rates; GPTMS coupling gives congruent dissolution [190]"},
+
+    {"id": "verify", "type": "box", "x": 2, "y": 142, "w": 176, "h": 14, "fill": "#E8F1FA", "stroke": "#0072B2", "text": ""},
+    {"id": "vIcon", "type": "icon", "icon": "micrograph", "x": 6, "y": 143.5, "w": 16, "h": 11, "params": {"particles": 14}, "label_pos": "none"},
+    {"id": "vText", "type": "text", "x": 26, "y": 149, "w": 148, "valign": "middle", "weight": "bold", "color": "#0B4F7C",
+     "text": "Verify, do not assume: measure particle size and spacing by TEM/SEM image analysis rather than inferring dispersion from the formulation."}
+  ]
+}

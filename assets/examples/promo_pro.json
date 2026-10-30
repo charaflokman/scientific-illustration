@@ -1,0 +1,17 @@
+{"credits":"Art: Servier Medical Art (CC BY 4.0)",
+ "scenes":[
+  {"type":"hook","kicker":"Open-source AI skill","title":"Your research deserves better figures","highlight":"better figures","seconds":3.2},
+  {"type":"compare","kicker":"Same paper, same data","title":"Basic drawing vs Scientific Illustration","highlight":"Scientific Illustration","seconds":5,
+   "left":{"tag":"Before","title":"Flat icons","points":["Generic shapes","No real anatomy"],"image":"v1.png"},
+   "right":{"tag":"After","title":"Publication-ready","points":["Medical-grade art","Editable vector text"],"image":"v2.png"}},
+  {"type":"counter","kicker":"Built in","title":"Free professional art, ready to use","seconds":4.2,
+   "items":[{"value":8806,"label":"free drawings"},{"value":4,"label":"art libraries"},{"value":0,"prefix":"$","label":"to use"}]},
+  {"type":"bars","kicker":"Search them all at once","title":"Drawings per library","highlight":"library","seconds":4.2,
+   "bars":[{"label":"Bioicons","value":2830},{"label":"Health Icons","value":2106},{"label":"TogoTV","value":2069},{"label":"Servier Medical Art","value":1801,"highlight":true}]},
+  {"type":"showcase","kicker":"Figures","title":"From a paragraph to a figure","highlight":"figure","caption":"3D hero, editable labels and real chemistry.","src":"silane_roles.png","seconds":4},
+  {"type":"showcase","kicker":"3D","title":"Rotate it. Export at 4×.","highlight":"4×","align":"right","src":"hero_dressing.png","seconds":3.6},
+  {"type":"showcase","kicker":"New style","title":"Or go full pixel art","highlight":"pixel art","caption":"Drawn natively, pixel by pixel.","src":"dressing_pixel.png","pixelated":true,"dark":true,"seconds":3.8},
+  {"type":"counter","kicker":"One skill","seconds":3.8,
+   "items":[{"value":7,"label":"output types"},{"value":2,"label":"styles"},{"value":100,"suffix":"%","label":"editable"}]},
+  {"type":"grid","title":"Figures · 3D · Summaries · Video","highlight":"Video","cols":3,"srcs":["v2.png","hero_dressing.png","lesson_fick.png","silane_roles.png","dressing_pixel.png","v1.png"],"seconds":3.4},
+  {"type":"cta","kicker":"Works with any AI agent","title":"Describe it. Get the figure.","highlight":"figure.","url":"github.com/charaflokman/scientific-illustration","subtitle":"Free · open source · MIT","seconds":4}]}

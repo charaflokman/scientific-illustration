@@ -1,0 +1,417 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Figure Editor</title>
+<style>
+  :root { --bg:#f4f5f7; --panel:#ffffff; --ink:#1d2330; --muted:#667085; --line:#d9dde3; --accent:#0072B2; --sel:#E69F00; }
+  * { box-sizing: border-box; }
+  html, body { margin:0; height:100%; background:var(--bg); color:var(--ink); font:13px/1.4 system-ui, "Segoe UI", Arial, sans-serif; }
+  body { display:grid; grid-template-columns: 1fr 280px; grid-template-rows: auto 1fr; height:100vh; }
+  header { grid-column: 1 / 3; display:flex; gap:6px; align-items:center; flex-wrap:wrap; padding:8px 12px; background:var(--panel); border-bottom:1px solid var(--line); }
+  header .title { font-weight:600; margin-right:10px; }
+  button, select, input[type=number] { font:inherit; padding:5px 9px; border:1px solid var(--line); border-radius:6px; background:#fff; color:var(--ink); cursor:pointer; }
+  button:hover { border-color:var(--accent); }
+  button.primary { background:var(--accent); border-color:var(--accent); color:#fff; }
+  button:disabled { opacity:.45; cursor:default; }
+  .sep { width:1px; height:22px; background:var(--line); margin:0 4px; }
+  #stage { overflow:auto; position:relative; display:flex; align-items:flex-start; justify-content:center; padding:24px; }
+  #paper { background:#fff; box-shadow:0 1px 4px rgba(0,0,0,.12); position:relative; }
+  #paper svg { display:block; }
+  aside { background:var(--panel); border-left:1px solid var(--line); overflow:auto; padding:12px; }
+  aside h3 { font-size:12px; text-transform:uppercase; letter-spacing:.04em; color:var(--muted); margin:14px 0 6px; }
+  aside h3:first-child { margin-top:0; }
+  .row { display:flex; gap:6px; align-items:center; margin:5px 0; flex-wrap:wrap; }
+  .row label { min-width:62px; color:var(--muted); }
+  #selid { font-family:Consolas, monospace; background:#f2f4f7; padding:3px 6px; border-radius:4px; word-break:break-all; }
+  #list { font-family:Consolas, monospace; font-size:12px; max-height:260px; overflow:auto; border:1px solid var(--line); border-radius:6px; }
+  #list div { padding:3px 6px; cursor:pointer; border-bottom:1px solid #f0f0f0; }
+  #list div:hover { background:#f5f8fc; } #list div.on { background:#fff4dc; }
+  #ph { color:#C0392B; font-size:12px; }
+  .hint { color:var(--muted); font-size:12px; }
+  #editbox { position:absolute; display:none; z-index:5; font:inherit; border:2px solid var(--sel); border-radius:4px; padding:4px; min-width:160px; background:#fff; }
+  .rv-selected { outline: 1.5px dashed var(--sel); outline-offset: 1px; }
+  #drop { position:fixed; inset:0; background:rgba(0,114,178,.12); border:3px dashed var(--accent); display:none; align-items:center; justify-content:center; font-size:20px; z-index:10; }
+  @media (max-width: 760px) { body { grid-template-columns: 1fr; grid-template-rows:auto 1fr auto; } aside { border-left:0; border-top:1px solid var(--line); max-height:40vh; } }
+</style>
+</head>
+<body>
+<header>
+  <span class="title" id="docname">Figure Editor</span>
+  <button id="open">Open SVG…</button>
+  <span class="sep"></span>
+  <button id="undo" title="Ctrl+Z">Undo</button>
+  <button id="redo" title="Ctrl+Y">Redo</button>
+  <span class="sep"></span>
+  <button id="addtext">Add text</button>
+  <button id="del" title="Delete key">Hide selected</button>
+  <label class="hint"><input type="checkbox" id="snap" checked> snap 0.5 mm</label>
+  <span class="sep"></span>
+  <button id="zout">−</button><span id="zlabel" class="hint">100%</span><button id="zin">+</button><button id="zfit">Fit</button>
+  <span class="sep"></span>
+  <button class="primary" id="save">Save SVG</button>
+  <select id="dpi"><option>300</option><option selected>600</option><option>1200</option></select>
+  <button id="png">PNG</button>
+  <button id="copyedits" title="Copy edits as JSON to paste back to Claude">Copy edits</button>
+  <input type="file" id="file" accept=".svg,image/svg+xml" hidden>
+</header>
+<div id="stage"><div id="paper"></div><textarea id="editbox" rows="3"></textarea></div>
+<aside>
+  <h3>Selection</h3>
+  <div class="row"><span id="selid">nothing selected</span></div>
+  <div class="row"><label>Colour</label><input type="color" id="c_main" value="#56B4E9"><span class="hint">main</span>
+    <input type="color" id="c_acc" value="#E69F00"><span class="hint">accent</span></div>
+  <div class="row"><label>Text size</label><button id="fminus">A−</button><button id="fplus">A+</button><span id="fsize" class="hint"></span></div>
+  <div class="row"><label>Nudge</label><button data-n="-1,0">←</button><button data-n="1,0">→</button><button data-n="0,-1">↑</button><button data-n="0,1">↓</button></div>
+  <div class="row"><button id="resetsel">Reset this element</button></div>
+  <p class="hint">Click an element to select it; click a label to select just the label (Shift+click for its parent). Drag to move. Double-click text to retype it. Arrow keys nudge (Shift = 2 mm). Arrows follow the elements they connect.</p>
+  <h3>Placeholders to fill</h3>
+  <div id="ph">none</div>
+  <h3>Elements</h3>
+  <div id="list"></div>
+  <h3>Round-trip</h3>
+  <p class="hint">“Save SVG” stores your edits inside the file. Give that SVG back to Claude: re-rendering with <code>--keep-edits</code> keeps your manual changes while Claude changes the content.</p>
+</aside>
+<div id="drop">Drop an SVG to edit</div>
+<script>
+const PAYLOAD = /*__RV_PAYLOAD__*/null;
+const PT = 0.3528;
+const $ = s => document.querySelector(s);
+let svg = null, meta = {spec:null, overrides:{}, credits:[]}, sel = null, zoom = 1, docName = "figure";
+const undoStack = [], redoStack = [];
+
+// ---------- load ----------
+function load(text, name) {
+  $('#paper').innerHTML = text;
+  svg = $('#paper svg');
+  if (!svg) { alert('Not an SVG'); return; }
+  docName = name || 'figure';
+  $('#docname').textContent = docName + '.svg';
+  const m = svg.querySelector('metadata#rv-data');
+  meta = {spec:null, overrides:{}, credits:[]};
+  if (m) { try { meta = JSON.parse(m.textContent); meta.overrides = meta.overrides || {}; } catch(e) { console.warn(e); } }
+  // plain SVGs (not made by render_figure.py): make top-level shapes selectable
+  if (!svg.querySelector('.rv-el')) {
+    let i = 0;
+    for (const ch of [...svg.children]) {
+      if (['defs','metadata','style','title','desc'].includes(ch.tagName)) continue;
+      ch.classList.add('rv-el'); if (!ch.id) ch.id = 'el' + (i++);
+    }
+  }
+  undoStack.length = 0; redoStack.length = 0;
+  updateArrows();
+  fit(); refreshList(); refreshPlaceholders(); select(null);
+}
+
+// ---------- geometry helpers (mirror render_figure.py) ----------
+function svgPoint(evt) {
+  const p = svg.createSVGPoint(); p.x = evt.clientX; p.y = evt.clientY;
+  return p.matrixTransform(svg.getScreenCTM().inverse());
+}
+function getT(el) {
+  const t = el.getAttribute('transform') || '';
+  const m = t.match(/translate\(\s*([-\d.e]+)[ ,]+([-\d.e]+)\s*\)/);
+  return m ? [parseFloat(m[1]), parseFloat(m[2])] : [0, 0];
+}
+function setT(el, dx, dy) {
+  const t = (el.getAttribute('transform') || '').replace(/translate\([^)]*\)\s*/, '').trim();
+  el.setAttribute('transform', `translate(${dx.toFixed(2)},${dy.toFixed(2)}) ${t}`.trim());
+}
+function boxOf(id) {
+  if (id.includes(',') && !document.getElementById(id)) { const [x,y] = id.split(',').map(Number); return [x,y,0,0]; }
+  const g = svg.getElementById ? svg.getElementById(id) : document.getElementById(id);
+  if (!g || !g.dataset.box) return null;
+  const [x,y,w,h] = g.dataset.box.split(' ').map(Number); const [dx,dy] = getT(g);
+  return [x+dx, y+dy, w, h];
+}
+function clip(cx, cy, bx, by, bw, bh, tx, ty, gap) {
+  const dx = tx-cx, dy = ty-cy; if (!dx && !dy) return [cx, cy];
+  const sx = dx ? (bw/2)/Math.abs(dx) : Infinity, sy = dy ? (bh/2)/Math.abs(dy) : Infinity, s = Math.min(sx, sy), L = Math.hypot(dx, dy);
+  return [cx+dx*s+dx/L*gap, cy+dy*s+dy/L*gap];
+}
+function arrowGeom(a, b, curve, route, gap) {
+  const [ax,ay,aw,ah] = a, [bx,by,bw,bh] = b, acx=ax+aw/2, acy=ay+ah/2, bcx=bx+bw/2, bcy=by+bh/2;
+  let d, tip, lab, ang;
+  if (route === 'elbow') {
+    const [sx,sy] = aw ? clip(acx,acy,ax,ay,aw,ah,bcx,acy,gap) : [acx,acy];
+    const [ex,ey] = bw ? clip(bcx,bcy,bx,by,bw,bh,bcx,acy,gap) : [bcx,bcy];
+    d = `M${sx},${sy} L${ex},${sy} L${ex},${ey}`;
+    ang = Math.abs(ey-sy) > 1e-6 ? Math.atan2(ey-sy, 0) : (ex > sx ? 0 : Math.PI);
+    lab = [(sx+ex)/2, sy]; tip = [ex, ey];
+  } else {
+    const [sx,sy] = aw ? clip(acx,acy,ax,ay,aw,ah,bcx,bcy,gap) : [acx,acy];
+    const [ex,ey] = bw ? clip(bcx,bcy,bx,by,bw,bh,acx,acy,gap) : [bcx,bcy];
+    const L = Math.hypot(ex-sx, ey-sy) || 1, nx = -(ey-sy)/L, ny = (ex-sx)/L;
+    if (curve) {
+      const qx = (sx+ex)/2+nx*curve*L, qy = (sy+ey)/2+ny*curve*L;
+      d = `M${sx},${sy} Q${qx},${qy} ${ex},${ey}`; ang = Math.atan2(ey-qy, ex-qx);
+      lab = [0.25*sx+0.5*qx+0.25*ex, 0.25*sy+0.5*qy+0.25*ey];
+    } else { d = `M${sx},${sy} L${ex},${ey}`; ang = Math.atan2(ey-sy, ex-sx); lab = [(sx+ex)/2, (sy+ey)/2]; }
+    tip = [ex, ey];
+  }
+  return {d, tip, lab, ang};
+}
+function headPath(tip, ang, s) {
+  const [x,y] = tip;
+  return `M${x},${y} L${x-s*Math.cos(ang-0.42)},${y-s*Math.sin(ang-0.42)} L${x-s*Math.cos(ang+0.42)},${y-s*Math.sin(ang+0.42)} Z`;
+}
+function updateArrows() {
+  for (const g of svg.querySelectorAll('.rv-arrow')) {
+    const a = boxOf(g.dataset.from), b = boxOf(g.dataset.to); if (!a || !b) continue;
+    const curve = parseFloat(g.dataset.curve||0), route = g.dataset.route, gap = parseFloat(g.dataset.gap||1), sw = parseFloat(g.dataset.sw||0.4);
+    const G = arrowGeom(a, b, curve, route, gap);
+    g.querySelector('.rv-line').setAttribute('d', G.d);
+    g.querySelector('.rv-head').setAttribute('d', headPath(G.tip, G.ang, sw*4.2));
+    const h2 = g.querySelector('.rv-head2');
+    if (h2) { const G2 = arrowGeom(b, a, -curve, route, gap); h2.setAttribute('d', headPath(G2.tip, G2.ang, sw*4.2)); }
+    const t = g.querySelector('text.rv-text');
+    if (t) {
+      const old = t.dataset.anchor ? t.dataset.anchor.split(',').map(Number) : null;
+      if (!old) { t.dataset.anchor = G.lab.join(','); continue; }  // first call (on load) records the renderer's anchor
+      const ddx = G.lab[0]-old[0], ddy = G.lab[1]-old[1];
+      for (const sp of t.querySelectorAll('tspan')) { sp.setAttribute('x', (+sp.getAttribute('x')+ddx).toFixed(2)); sp.setAttribute('y', (+sp.getAttribute('y')+ddy).toFixed(2)); }
+      t.dataset.anchor = G.lab.join(',');
+    }
+  }
+}
+
+// ---------- text ----------
+function wrapText(text, widthMM, sizeMM) {
+  const out = [];
+  for (let para of String(text).split('\n')) {
+    para = para.replace(/\[\?[^\]]*\]/g, m => m.replace(/ /g, ' '));
+    if (!widthMM) { out.push(para); continue; }
+    const maxc = Math.max(4, Math.floor(widthMM / (0.55*sizeMM))); let cur = '';
+    for (const w of para.split(' ')) { if (cur && cur.length+1+w.length > maxc) { out.push(cur); cur = w; } else cur = cur ? cur+' '+w : w; }
+    out.push(cur);
+  }
+  return out;
+}
+function setText(t, text) {
+  const spans = [...t.querySelectorAll('tspan')];
+  const x = spans.length ? +spans[0].getAttribute('x') : +(t.getAttribute('x')||0);
+  const size = +t.getAttribute('font-size'), lh = size*1.18, valign = t.dataset.valign || 'top';
+  const lines = wrapText(text, parseFloat(t.dataset.width) || null, size);
+  let y0;
+  if (spans.length) {
+    const fy = +spans[0].getAttribute('y'), n0 = spans.length;
+    // recover the anchor y used by the renderer, then lay out again
+    const anchorY = valign === 'middle' ? fy + (n0-1)*lh/2 - size*0.35 : valign === 'bottom' ? fy + (n0-1)*lh : fy - size*0.8;
+    y0 = valign === 'middle' ? anchorY - (lines.length-1)*lh/2 + size*0.35 : valign === 'bottom' ? anchorY - (lines.length-1)*lh : anchorY + size*0.8;
+  } else { y0 = +(t.getAttribute('y')||0); }
+  t.textContent = '';
+  lines.forEach((ln, i) => {
+    const sp = document.createElementNS('http://www.w3.org/2000/svg', 'tspan');
+    sp.setAttribute('x', x.toFixed(2)); sp.setAttribute('y', (y0+i*lh).toFixed(2)); sp.textContent = ln;
+    if (/\[\?[^\]]*\]/.test(ln)) sp.setAttribute('fill', '#C0392B');
+    t.appendChild(sp);
+  });
+  t.dataset.raw = text;
+}
+
+// ---------- overrides ----------
+function ov(id) { return meta.overrides[id] || (meta.overrides[id] = {}); }
+function snapshot() { undoStack.push({html: svg.outerHTML, ov: JSON.stringify(meta.overrides), sel: sel && sel.id}); if (undoStack.length > 100) undoStack.shift(); redoStack.length = 0; }
+function restore(st) {
+  const name = docName, keepMeta = meta;
+  $('#paper').innerHTML = st.html; svg = $('#paper svg'); meta = keepMeta; meta.overrides = JSON.parse(st.ov);
+  applyZoom(); refreshList(); refreshPlaceholders(); select(st.sel ? document.getElementById(st.sel) : null);
+}
+$('#undo').onclick = () => { if (!undoStack.length) return; redoStack.push({html: svg.outerHTML, ov: JSON.stringify(meta.overrides), sel: sel && sel.id}); restore(undoStack.pop()); };
+$('#redo').onclick = () => { if (!redoStack.length) return; undoStack.push({html: svg.outerHTML, ov: JSON.stringify(meta.overrides), sel: sel && sel.id}); restore(redoStack.pop()); };
+
+// ---------- selection ----------
+function selectable(target, parentOnly) {
+  if (!parentOnly) { const t = target.closest('text.rv-text'); if (t && t.id) return t; }
+  return target.closest('.rv-el');
+}
+function select(el) {
+  svg && svg.querySelectorAll('.rv-selected').forEach(e => e.classList.remove('rv-selected'));
+  sel = el;
+  if (el) el.classList.add('rv-selected');
+  $('#selid').textContent = el ? el.id + (el.dataset.type ? '  (' + el.dataset.type + ')' : el.tagName === 'text' ? '  (text)' : '') : 'nothing selected';
+  $('#fsize').textContent = el && el.tagName === 'text' ? (+el.getAttribute('font-size')/PT).toFixed(1) + ' pt' : '';
+  document.querySelectorAll('#list div').forEach(d => d.classList.toggle('on', el && d.dataset.id === el.id));
+}
+function refreshList() {
+  const L = $('#list'); L.innerHTML = '';
+  for (const g of svg.querySelectorAll('.rv-el, text.rv-text')) {
+    if (!g.id) continue;
+    const d = document.createElement('div'); d.dataset.id = g.id;
+    d.textContent = (g.tagName === 'text' ? '  ↳ ' : '') + g.id + (g.style.display === 'none' ? '  (hidden)' : '');
+    d.onclick = () => select(g); L.appendChild(d);
+  }
+}
+function refreshPlaceholders() {
+  const found = [];
+  for (const t of svg.querySelectorAll('text')) { const m = (t.textContent||'').match(/\[\?[^\]]*\]/g); if (m && t.style.display !== 'none') found.push(`${t.id||'text'}: ${m.join(' ')}`); }
+  $('#ph').innerHTML = found.length ? found.map(s => `<div>${s.replace(/</g,'&lt;')}</div>`).join('') : '<span class="hint">none</span>';
+}
+
+// ---------- drag ----------
+let drag = null;
+$('#paper').addEventListener('pointerdown', e => {
+  if (!svg || e.button !== 0) return;
+  const el = selectable(e.target, e.shiftKey);
+  if (!el || el.classList.contains('rv-arrow')) { select(el || null); return; }
+  select(el); snapshot();
+  const p = svgPoint(e), [dx, dy] = getT(el);
+  drag = {el, x0: p.x, y0: p.y, dx0: dx, dy0: dy, moved: false};
+  $('#paper').setPointerCapture(e.pointerId);
+});
+$('#paper').addEventListener('pointermove', e => {
+  if (!drag) return;
+  const p = svgPoint(e); let dx = drag.dx0 + p.x - drag.x0, dy = drag.dy0 + p.y - drag.y0;
+  if ($('#snap').checked) { dx = Math.round(dx*2)/2; dy = Math.round(dy*2)/2; }
+  setT(drag.el, dx, dy); drag.moved = true; updateArrows();
+});
+$('#paper').addEventListener('pointerup', e => {
+  if (!drag) return;
+  if (drag.moved) { const [dx, dy] = getT(drag.el); Object.assign(ov(drag.el.id), {dx: +dx.toFixed(2), dy: +dy.toFixed(2)}); syncAdded(drag.el); }
+  else undoStack.pop();
+  drag = null;
+});
+
+// ---------- text editing ----------
+$('#paper').addEventListener('dblclick', e => {
+  const t = e.target.closest('text'); if (!t) return;
+  const box = $('#editbox'), r = t.getBoundingClientRect(), s = $('#stage').getBoundingClientRect();
+  box.style.left = (r.left - s.left + $('#stage').scrollLeft) + 'px'; box.style.top = (r.top - s.top + $('#stage').scrollTop - 4) + 'px';
+  box.style.display = 'block'; box.value = t.dataset.raw ?? t.textContent; box.focus(); box.select();
+  box.onkeydown = ev => {
+    if (ev.key === 'Enter' && !ev.shiftKey) { ev.preventDefault(); commit(); }
+    if (ev.key === 'Escape') { box.style.display = 'none'; }
+  };
+  box.onblur = commit;
+  function commit() {
+    if (box.style.display === 'none') return;
+    box.style.display = 'none';
+    if (box.value === (t.dataset.raw ?? t.textContent)) return;
+    snapshot(); setText(t, box.value);
+    if (t.id) { ov(t.id).text = box.value; syncAdded(t); }
+    refreshPlaceholders();
+  }
+});
+
+// ---------- tools ----------
+function lighten(hex, f) { const n = parseInt(hex.slice(1), 16); let r=n>>16, g=(n>>8)&255, b=n&255; r=Math.round(r+(255-r)*f); g=Math.round(g+(255-g)*f); b=Math.round(b+(255-b)*f); return '#'+((1<<24)+(r<<16)+(g<<8)+b).toString(16).slice(1).toUpperCase(); }
+$('#c_main').oninput = e => {
+  if (!sel) return; const c = e.target.value;
+  if (!$('#c_main').dataset.snap) { snapshot(); $('#c_main').dataset.snap = 1; }
+  if (sel.tagName === 'text') { sel.setAttribute('fill', c); ov(sel.id).color = c; return; }
+  const paint = sel.querySelectorAll('.rv-paint');
+  if (paint.length) {
+    paint.forEach(p => { if (p.getAttribute('fill') && p.getAttribute('fill') !== 'none') p.setAttribute('fill', lighten(c, 0.35)); else p.setAttribute('stroke', c); });
+    ov(sel.id).color = c;
+  } else {
+    const f = sel.querySelectorAll('.rv-fill'); (f.length ? f : sel.querySelectorAll('rect,circle,ellipse,path,polygon')).forEach(p => p.setAttribute('fill', c));
+    ov(sel.id).fill = c;
+  }
+};
+$('#c_main').onchange = () => { delete $('#c_main').dataset.snap; };
+$('#c_acc').oninput = e => {
+  if (!sel) return; const c = e.target.value;
+  if (!$('#c_acc').dataset.snap) { snapshot(); $('#c_acc').dataset.snap = 1; }
+  sel.querySelectorAll('.rv-accent').forEach(p => p.setAttribute('fill', c)); ov(sel.id).accent = c;
+};
+$('#c_acc').onchange = () => { delete $('#c_acc').dataset.snap; };
+function fontStep(k) {
+  if (!sel) return; const ts = sel.tagName === 'text' ? [sel] : [...sel.querySelectorAll('text')]; if (!ts.length) return;
+  snapshot();
+  for (const t of ts) { const s = Math.max(4*PT, +t.getAttribute('font-size') + k*0.5*PT); t.setAttribute('font-size', s.toFixed(3)); setText(t, t.dataset.raw ?? t.textContent); if (t.id) ov(t.id).font_pt = +(s/PT).toFixed(1); }
+  select(sel);
+}
+$('#fplus').onclick = () => fontStep(1); $('#fminus').onclick = () => fontStep(-1);
+function nudge(x, y) { if (!sel || sel.classList.contains('rv-arrow')) return; snapshot(); const [dx, dy] = getT(sel); setT(sel, dx+x, dy+y); Object.assign(ov(sel.id), {dx: +(dx+x).toFixed(2), dy: +(dy+y).toFixed(2)}); updateArrows(); syncAdded(sel); }
+document.querySelectorAll('[data-n]').forEach(b => b.onclick = () => { const [x, y] = b.dataset.n.split(',').map(Number); nudge(x*0.5, y*0.5); });
+$('#del').onclick = () => { if (!sel) return; snapshot(); sel.style.display = 'none'; ov(sel.id).hidden = true; refreshList(); refreshPlaceholders(); select(null); };
+$('#resetsel').onclick = () => {
+  if (!sel) return; snapshot(); setT(sel, 0, 0); delete meta.overrides[sel.id]; updateArrows();
+  alert('Position reset. Colour/text changes are undone fully the next time Claude re-renders the figure.');
+};
+$('#addtext').onclick = () => {
+  snapshot();
+  const vb = svg.viewBox.baseVal, id = 'note' + Date.now().toString(36);
+  const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+  g.setAttribute('id', id); g.setAttribute('class', 'rv-el'); g.dataset.type = 'text'; g.dataset.box = `${vb.width/2} ${vb.height/2} 0 0`;
+  const t = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+  t.setAttribute('id', id + '.label'); t.setAttribute('class', 'rv-text'); t.setAttribute('font-size', (7*PT).toFixed(3)); t.setAttribute('fill', '#222222');
+  t.dataset.valign = 'top'; t.dataset.width = '';
+  const sp = document.createElementNS('http://www.w3.org/2000/svg', 'tspan'); sp.setAttribute('x', vb.width/2); sp.setAttribute('y', vb.height/2 + 7*PT*0.8); sp.textContent = 'New text';
+  t.appendChild(sp); g.appendChild(t); svg.appendChild(g);
+  (meta.overrides.__added__ = meta.overrides.__added__ || []).push({type: 'text', id, x: vb.width/2, y: vb.height/2, text: 'New text'});
+  refreshList(); select(t);
+};
+function syncAdded(el) {  // keep elements added in the editor in sync inside overrides.__added__
+  const list = meta.overrides.__added__; if (!list) return;
+  const gid = el.tagName === 'text' ? el.id.replace(/\.label$/, '') : el.id;
+  const rec = list.find(r => r.id === gid); if (!rec) return;
+  const g = document.getElementById(gid); const [dx, dy] = getT(g);
+  const t = g.querySelector('text'); rec.text = t.dataset.raw ?? t.textContent; rec.dx = dx; rec.dy = dy;
+}
+
+// ---------- zoom ----------
+function applyZoom() {
+  if (!svg) return; const vb = svg.viewBox.baseVal; const pxPerMM = 3.7795 * zoom;
+  svg.setAttribute('width', (vb.width*pxPerMM).toFixed(1)); svg.setAttribute('height', (vb.height*pxPerMM).toFixed(1));
+  $('#zlabel').textContent = Math.round(zoom*100) + '%';
+}
+function fit() { if (!svg) return; const vb = svg.viewBox.baseVal, s = $('#stage'); zoom = Math.max(0.2, Math.min((s.clientWidth-60)/(vb.width*3.7795), (s.clientHeight-60)/(vb.height*3.7795))); applyZoom(); }
+$('#zin').onclick = () => { zoom *= 1.25; applyZoom(); }; $('#zout').onclick = () => { zoom /= 1.25; applyZoom(); }; $('#zfit').onclick = fit;
+
+// ---------- save / export ----------
+function cleanSVG() {
+  const c = svg.cloneNode(true);
+  c.querySelectorAll('.rv-selected').forEach(e => e.classList.remove('rv-selected'));
+  const vb = svg.viewBox.baseVal; c.setAttribute('width', vb.width + 'mm'); c.setAttribute('height', vb.height + 'mm');
+  let m = c.querySelector('metadata#rv-data');
+  if (!m) { m = document.createElementNS('http://www.w3.org/2000/svg', 'metadata'); m.id = 'rv-data'; c.insertBefore(m, c.firstChild); }
+  meta.generator = meta.generator || 'scientific-illustration/editor';
+  m.textContent = 'RV_META';
+  const json = JSON.stringify(meta).replace(/]]>/g, ']]\\u003e');
+  const s = new XMLSerializer().serializeToString(c)
+    .replace(/<metadata([^>]*)id="rv-data"([^>]*)>RV_META<\/metadata>/, () => `<metadata id="rv-data"><![CDATA[${json}]]></metadata>`);
+  return '<?xml version="1.0" encoding="UTF-8"?>\n' + s;
+}
+async function saveBlob(blob, filename, types) {
+  if (window.showSaveFilePicker) {
+    try { const h = await showSaveFilePicker({suggestedName: filename, types}); const w = await h.createWritable(); await w.write(blob); await w.close(); return; }
+    catch (e) { if (e.name === 'AbortError') return; }
+  }
+  const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = filename; a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+}
+$('#save').onclick = () => saveBlob(new Blob([cleanSVG()], {type: 'image/svg+xml'}), docName + '.svg', [{description: 'SVG', accept: {'image/svg+xml': ['.svg']}}]);
+$('#png').onclick = () => {
+  const dpi = +$('#dpi').value, vb = svg.viewBox.baseVal, W = Math.round(vb.width/25.4*dpi), H = Math.round(vb.height/25.4*dpi);
+  const img = new Image(); const url = URL.createObjectURL(new Blob([cleanSVG()], {type: 'image/svg+xml'}));
+  img.onload = () => { const cv = document.createElement('canvas'); cv.width = W; cv.height = H; const ctx = cv.getContext('2d'); ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, W, H); ctx.drawImage(img, 0, 0, W, H); URL.revokeObjectURL(url);
+    cv.toBlob(b => saveBlob(b, `${docName}_${dpi}dpi.png`, [{description: 'PNG', accept: {'image/png': ['.png']}}]), 'image/png'); };
+  img.src = url;
+};
+$('#copyedits').onclick = async () => {
+  const txt = JSON.stringify(meta.overrides, null, 1);
+  try { await navigator.clipboard.writeText(txt); alert('Edits copied. Paste them to Claude, or save the SVG and give Claude the file.'); }
+  catch (e) { prompt('Copy these edits:', txt); }
+};
+
+// ---------- keyboard / files ----------
+document.addEventListener('keydown', e => {
+  if (e.target.tagName === 'TEXTAREA' || e.target.tagName === 'INPUT') return;
+  if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'z') { e.preventDefault(); $('#undo').click(); }
+  else if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'y') { e.preventDefault(); $('#redo').click(); }
+  else if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 's') { e.preventDefault(); $('#save').click(); }
+  else if (e.key === 'Delete' || e.key === 'Backspace') { e.preventDefault(); $('#del').click(); }
+  else if (e.key.startsWith('Arrow') && sel) { e.preventDefault(); const s = e.shiftKey ? 2 : 0.5; nudge(e.key === 'ArrowLeft' ? -s : e.key === 'ArrowRight' ? s : 0, e.key === 'ArrowUp' ? -s : e.key === 'ArrowDown' ? s : 0); }
+  else if (e.key === 'Escape') select(null);
+});
+$('#open').onclick = () => $('#file').click();
+$('#file').onchange = e => { const f = e.target.files[0]; if (f) f.text().then(t => load(t, f.name.replace(/\.svg$/i, ''))); };
+window.addEventListener('dragover', e => { e.preventDefault(); $('#drop').style.display = 'flex'; });
+window.addEventListener('dragleave', e => { if (e.target === $('#drop')) $('#drop').style.display = 'none'; });
+window.addEventListener('drop', e => { e.preventDefault(); $('#drop').style.display = 'none'; const f = e.dataTransfer.files[0]; if (f) f.text().then(t => load(t, f.name.replace(/\.svg$/i, ''))); });
+window.addEventListener('resize', () => {});
+if (PAYLOAD) load(PAYLOAD.svg, PAYLOAD.name);
+</script>
+</body>
+</html>

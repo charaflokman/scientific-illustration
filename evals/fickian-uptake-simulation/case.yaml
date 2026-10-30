@@ -1,0 +1,8 @@
+schema_version: "1.1"
+name: fickian-uptake-simulation
+expected_outcome: |
+  A single self-contained interactive HTML file with sliders for film thickness, diffusion coefficient and CNC
+  content, a live Mt/Minf vs time (or sqrt t) curve computed from the Crank plane-sheet series solution (or
+  equivalent correct analytic solution), visible water uptake animation or readouts (e.g. t50 / t90), and a clear
+  statement of the model's source (Crank), assumptions and that the CNC effect is an assumed/illustrative trend
+  unless calibrated with data. The simulation was checked numerically (e.g. half-time matches 0.049 L^2/D).

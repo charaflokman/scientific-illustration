@@ -1,0 +1,44 @@
+{
+  "canvas": {"width_mm": 180, "height_mm": 128, "font_pt": 7, "background": "#FFFFFF"},
+  "colors": {"matrix": "#56B4E9", "filler": "#E69F00", "coat": "#009E73", "silver": "#AEB6C2", "ink": "#0B3D5C"},
+  "provenance": "Schematic of organosilane roles in wound-care coatings. 3D hero rendered with render_3d.py (no AI image generation). Chemistry drawn with RDKit; reactions are the standard hydrolysis/condensation of alkoxysilanes. No measured values shown.",
+  "elements": [
+    {"id": "title", "type": "text", "x": 90, "y": 6, "anchor": "middle", "font_pt": 12, "weight": "bold", "color": "#0B3D5C", "text": "Organosilanes in wound-care coatings: coupling agent, dispersant, surfactant"},
+    {"id": "rule", "type": "box", "x": 30, "y": 10.6, "w": 120, "h": 0.4, "fill": "#0B3D5C", "stroke": "none", "text": ""},
+
+    {"id": "hero", "type": "image", "path": "hero_dressing.png", "x": 36, "y": 12, "w": 100, "h": 70.8, "label_pos": "none"},
+
+    {"id": "L1", "type": "text", "x": 3, "y": 20, "w": 33, "weight": "bold", "color": "#1E7A5E", "text": "Organosilane layer"},
+    {"id": "L1d", "type": "text", "x": 3, "y": 24, "w": 33, "font_pt": 6, "color": "#444444", "text": "chains anchored through Si–O bonds"},
+    {"id": "A1", "type": "arrow", "from": [30, 22], "to": [52, 26], "color": "#1E7A5E", "width_mm": 0.3},
+    {"id": "L2", "type": "text", "x": 3, "y": 42, "w": 33, "weight": "bold", "color": "#2B7BB0", "text": "Polymer composite layer"},
+    {"id": "L2d", "type": "text", "x": 3, "y": 46, "w": 33, "font_pt": 6, "color": "#444444", "text": "nanocellulose + silane-capped AgNPs, evenly dispersed"},
+    {"id": "A2", "type": "arrow", "from": [30, 45], "to": [53, 47], "color": "#2B7BB0", "width_mm": 0.3},
+    {"id": "L3", "type": "text", "x": 3, "y": 66, "w": 33, "weight": "bold", "color": "#6B6B6B", "text": "Porous substrate"},
+    {"id": "L3d", "type": "text", "x": 3, "y": 70, "w": 33, "font_pt": 6, "color": "#444444", "text": "mechanical support, exudate uptake"},
+    {"id": "A3", "type": "arrow", "from": [30, 68], "to": [60, 70], "color": "#6B6B6B", "width_mm": 0.3},
+
+    {"id": "c1", "type": "box", "x": 138, "y": 13, "w": 40, "h": 22, "fill": "#EEF7F3", "stroke": "#1E7A5E", "text": ""},
+    {"id": "c1t", "type": "text", "x": 140, "y": 17, "weight": "bold", "color": "#1E7A5E", "text": "1  Coupling agent"},
+    {"id": "c1i", "type": "icon", "icon": "silica_network", "x": 140, "y": 19.5, "w": 14, "h": 14, "color": "matrix", "accent": "coat", "params": {"coupled": true}, "label_pos": "none"},
+    {"id": "c1d", "type": "text", "x": 156, "y": 22, "w": 21, "font_pt": 6, "text": "Covalent bridge: inorganic surface ↔ polymer, better stress transfer"},
+
+    {"id": "c2", "type": "box", "x": 138, "y": 37, "w": 40, "h": 22, "fill": "#EEF5FB", "stroke": "#2B7BB0", "text": ""},
+    {"id": "c2t", "type": "text", "x": 140, "y": 41, "weight": "bold", "color": "#2B7BB0", "text": "2  Dispersant"},
+    {"id": "c2a", "type": "icon", "icon": "agglomerate", "x": 140, "y": 43.5, "w": 10, "h": 10, "accent": "silver", "label": "without", "label_width": 12},
+    {"id": "c2b", "type": "icon", "icon": "film_cross_section", "x": 153, "y": 44.5, "w": 12, "h": 8, "color": "matrix", "accent": "silver", "params": {"particles": 14, "particle_r": 1.0}, "label": "with", "label_width": 12},
+    {"id": "c2c", "type": "icon", "icon": "check", "x": 168, "y": 45, "w": 7, "h": 7, "label_pos": "none"},
+
+    {"id": "c3", "type": "box", "x": 138, "y": 61, "w": 40, "h": 22, "fill": "#F4F5F7", "stroke": "#6B7685", "text": ""},
+    {"id": "c3t", "type": "text", "x": 140, "y": 65, "weight": "bold", "color": "#4A5563", "text": "3  Surfactant / capping"},
+    {"id": "c3i", "type": "icon", "icon": "coated_nanoparticle", "x": 140, "y": 67.5, "w": 14, "h": 14, "color": "coat", "accent": "silver", "label_pos": "none"},
+    {"id": "c3d", "type": "text", "x": 156, "y": 70, "w": 21, "font_pt": 6, "text": "Silane shell on AgNPs limits growth and sedimentation"},
+
+    {"id": "chem", "type": "panel", "x": 2, "y": 86, "w": 176, "h": 40, "letter": "", "title": "Chemistry: how alkoxysilanes bind", "fill": "#FAFBFC", "title_bar": "#E9EEF3"},
+    {"id": "m1", "type": "molecule", "smiles": "CCO[Si](CCCN)(OCC)OCC", "x": 5, "y": 95, "w": 30, "h": 22, "label": "APTES (amino)", "label_width": 30},
+    {"id": "m2", "type": "molecule", "smiles": "CO[Si](CCCOCC1CO1)(OC)OC", "x": 37, "y": 95, "w": 32, "h": 22, "label": "GPTMS (epoxy)", "label_width": 30},
+    {"id": "r1", "type": "text", "x": 74, "y": 100, "w": 102, "text": "① Hydrolysis:  R–Si(OR′)₃ + 3 H₂O → R–Si(OH)₃ + 3 R′OH"},
+    {"id": "r2", "type": "text", "x": 74, "y": 107, "w": 102, "text": "② Condensation:  R–Si(OH)₃ + HO–surface → R–Si(OH)₂–O–surface + H₂O"},
+    {"id": "r3", "type": "text", "x": 74, "y": 114, "w": 102, "text": "③ The organofunctional group R (–NH₂, epoxide) reacts with or entangles the polymer matrix"}
+  ]
+}

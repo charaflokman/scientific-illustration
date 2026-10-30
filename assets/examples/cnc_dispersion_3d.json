@@ -1,0 +1,16 @@
+{
+ "title": "APTES-CNC dispersion vs agglomeration in chitosan film",
+ "background": "#ffffff",
+ "camera": [0, 9, 15],
+ "ground": -1.2,
+ "objects": [
+  {"type": "slab", "id": "film_a", "pos": [-5.5, 0, 0], "size": [9, 1.4, 6], "color": "#56B4E9", "opacity": 0.3, "label": "(a) With APTES-modified CNC", "labelPos": [-5.5, 2.3, 0]},
+  {"type": "rods", "id": "cnc_a", "count": 70, "length": 1.0, "radius": 0.07, "color": "#E69F00", "seed": 3,
+   "region": [[-9.6, -1.4], [-0.45, 0.45], [-2.6, 2.6]], "label": "Homogeneous CNC dispersion", "labelPos": [-5.5, -1.7, 3.4]},
+  {"type": "slab", "id": "film_b", "pos": [5.5, 0, 0], "size": [9, 1.4, 6], "color": "#56B4E9", "opacity": 0.3, "label": "(b) Without dispersant", "labelPos": [5.5, 2.3, 0]},
+  {"type": "rods", "id": "agg1", "count": 35, "length": 1.0, "radius": 0.07, "color": "#E69F00", "seed": 5, "cluster": [3.4, 0, -1.2, 1.4], "label": "CNC agglomerates", "labelPos": [5.5, -1.7, 3.4]},
+  {"type": "rods", "id": "agg2", "count": 25, "length": 1.0, "radius": 0.07, "color": "#E69F00", "seed": 9, "cluster": [7.4, 0, 1.3, 1.1]},
+  {"type": "arrow", "id": "water_a", "from": [-5.5, 3.6, 0], "to": [-5.5, 0.9, 0], "color": "#0072B2", "label": "H₂O path: tortuous [? confirm]", "labelPos": [-5.5, 4.1, 0]},
+  {"type": "arrow", "id": "water_b", "from": [5.5, 3.6, 0], "to": [5.5, 0.9, 0], "color": "#0072B2", "label": "H₂O path: short [? confirm]", "labelPos": [5.5, 4.1, 0]}
+ ]
+}

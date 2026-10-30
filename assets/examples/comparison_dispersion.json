@@ -1,0 +1,33 @@
+{
+  "canvas": {"width_mm": 170, "height_mm": 100, "font_pt": 7},
+  "colors": {"matrix": "#56B4E9", "filler": "#E69F00", "coat": "#009E73"},
+  "provenance": "Template: side-by-side comparison (treated vs untreated filler). All labels are schematic; replace effects with the user's measured results.",
+  "elements": [
+    {"id": "pA", "type": "panel", "x": 2, "y": 2, "w": 81, "h": 96, "letter": "(a)", "title": "With organosilane dispersant", "fill": "#F3F8FC", "title_bar": "#DCEBF7"},
+    {"id": "pB", "type": "panel", "x": 87, "y": 2, "w": 81, "h": 96, "letter": "(b)", "title": "Without dispersant", "fill": "#FDF6EE", "title_bar": "#F8E6CF"},
+
+    {"id": "filmA", "type": "icon", "icon": "film_cross_section", "x": 6, "y": 12, "w": 44, "h": 30, "color": "matrix", "accent": "filler",
+     "params": {"particles": 42, "dispersion": "uniform"}, "label": "Uniform dispersion"},
+    {"id": "zoomA", "type": "icon", "icon": "coated_nanoparticle", "x": 58, "y": 13, "w": 20, "h": 20, "color": "coat", "accent": "filler",
+     "label": "Silane compatibilisation", "label_width": 24},
+    {"id": "zA", "type": "arrow", "from": "filmA", "to": "zoomA", "style": "dashed"},
+
+    {"id": "filmB", "type": "icon", "icon": "film_cross_section", "x": 91, "y": 12, "w": 44, "h": 30, "color": "matrix", "accent": "filler",
+     "params": {"particles": 42, "dispersion": "agglomerated"}, "seed": 4, "label": "Particle agglomerates"},
+    {"id": "zoomB", "type": "icon", "icon": "agglomerate", "x": 143, "y": 13, "w": 20, "h": 20, "accent": "filler", "label": "Agglomerate", "label_width": 24},
+    {"id": "zB", "type": "arrow", "from": "filmB", "to": "zoomB", "style": "dashed"},
+
+    {"id": "hA", "type": "text", "x": 42.5, "y": 54, "text": "Expected outcomes [? confirm with your data]", "anchor": "middle", "weight": "bold"},
+    {"id": "oA1", "type": "icon", "icon": "plot_curve", "x": 9, "y": 62, "w": 16, "h": 14, "color": "good", "params": {"kind": "rise"}, "label": "Higher tensile strength [?]"},
+    {"id": "oA2", "type": "icon", "icon": "plot_curve", "x": 34, "y": 62, "w": 16, "h": 14, "color": "good", "params": {"kind": "sigmoid"}, "label": "Sustained release [?]"},
+    {"id": "oA3", "type": "icon", "icon": "check", "x": 61, "y": 62, "w": 13, "h": 13, "label": "Stable film"},
+
+    {"id": "hB", "type": "text", "x": 127.5, "y": 54, "text": "Failure modes [? confirm with your data]", "anchor": "middle", "weight": "bold"},
+    {"id": "oB1", "type": "icon", "icon": "crack", "x": 92, "y": 62, "w": 20, "h": 14, "color": "matrix", "accent": "filler", "label": "Stress concentration & cracking"},
+    {"id": "oB2", "type": "icon", "icon": "plot_curve", "x": 120, "y": 62, "w": 16, "h": 14, "color": "bad", "params": {"kind": "peak"}, "label": "Burst release [?]"},
+    {"id": "oB3", "type": "icon", "icon": "cross", "x": 146, "y": 62, "w": 13, "h": 13, "label": "Particle leaching"},
+
+    {"id": "leg", "type": "legend", "x": 6, "y": 90, "direction": "horizontal",
+     "items": [{"color": "matrix", "label": "Biopolymer matrix"}, {"color": "filler", "label": "Nanofiller"}, {"color": "coat", "label": "Silane shell"}]}
+  ]
+}

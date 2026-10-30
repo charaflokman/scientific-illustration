@@ -1,0 +1,16 @@
+cff-version: 1.2.0
+message: "If you use this software in your work, please cite it as below."
+title: "Scientific Illustration: an AI agent skill for editable research figures, 3D images, lesson summaries and video"
+type: software
+authors:
+  - alias: charaflokman
+version: 1.0.0
+date-released: 2026-10-30
+license: MIT
+repository-code: "https://github.com/charaflokman/scientific-illustration"
+url: "https://charaflokman.github.io/scientific-illustration/"
+keywords:
+  - scientific illustration
+  - graphical abstract
+  - figures
+  - AI agent skill

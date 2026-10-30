@@ -1,0 +1,7 @@
+references/remotion/
+__pycache__/
+*.pyc
+node_modules/
+.env
+*.key
+.DS_Store

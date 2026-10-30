@@ -1,0 +1,9 @@
+schema_version: "1.1"
+name: ftir-tga-panel-from-csv
+expected_outcome: |
+  A three-panel double-column figure (SVG with editable text + PNG/PDF) with FTIR wavenumber axis reversed, series
+  distinguishable without colour, TGA mass vs temperature and DTG computed from the data, panel letters (a)(b)(c);
+  a table of T5%, Tmax(DTG) and residue at 600 C computed from the files (not invented); peaks only labelled at
+  positions present in the data or left unlabelled. Note: input data are synthetic test files.
+context:
+  scaffold_script: place-files.sh

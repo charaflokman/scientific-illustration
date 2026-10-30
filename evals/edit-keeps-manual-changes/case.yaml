@@ -1,0 +1,9 @@
+schema_version: "1.1"
+name: edit-keeps-manual-changes
+expected_outcome: |
+  A new SVG in which the panel (a) title reads APTES-modified CNC, the legend item reads CNC, panel (b) has a new
+  outcome labelled "Lower water resistance [?]" without overlapping others, and the user's earlier manual edits
+  (moved zoomA element, retyped film label "Homogeneous CNC dispersion", hidden check icon, added note text) are
+  still present. PNG checked visually. The reply lists what changed and full paths.
+context:
+  scaffold_script: place-files.sh

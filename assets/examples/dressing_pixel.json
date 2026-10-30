@@ -1,0 +1,14 @@
+{"canvas":[280,180],"background":["#1B2B44","#22385A","#2A4670"],"title":"SMART WOUND DRESSING","seed":3,"stars":40,
+ "objects":[
+  {"type":"slab","id":"sub","pos":[130,136],"size":[80,52,9],"color":"#D9CBAA","pattern":"mesh","shadow":true},
+  {"type":"slab","id":"comp","pos":[130,96],"size":[80,52,12],"color":"#6FB7E0","pattern":"glass"},
+  {"type":"fibers","on":"comp","count":8,"len":16,"color":"#E0B060"},
+  {"type":"spheres","on":"comp","face":"front","count":5,"r":3,"color":"#C7CDD6","sparkle":true},
+  {"type":"spheres","on":"comp","face":"side","count":4,"r":3,"color":"#C7CDD6","sparkle":true},
+  {"type":"spheres","on":"comp","count":7,"r":3,"color":"#C7CDD6","sparkle":true},
+  {"type":"slab","id":"sil","pos":[130,52],"size":[80,52,3],"color":"#2FA37E"},
+  {"type":"brush","on":"sil","spacing":5,"stem":4,"color":"#1E7A5E","head":"#4FC3F7"},
+  {"type":"label","text":"SILANE LAYER","at":[200,30],"to":[172,50],"color":"#5FD3A8"},
+  {"type":"label","text":"SILVER NPs","at":[194,100],"to":[168,106],"color":"#D8DEE8"},
+  {"type":"label","text":"NANOCELLULOSE","at":[8,74],"to":[126,87],"color":"#F0C070"},
+  {"type":"label","text":"POROUS BASE","at":[14,150],"to":[92,140],"color":"#E9DFC9"}]}

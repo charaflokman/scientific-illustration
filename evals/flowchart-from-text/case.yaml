@@ -1,0 +1,7 @@
+schema_version: "1.1"
+name: flowchart-from-text
+expected_outcome: |
+  A Mermaid or D2 source file plus a locally rendered SVG/PNG flowchart. Steps follow the text order, conditions
+  (7 days, 30 C, static, 0.1 M NaOH, 80 C, 1 h) are on edges or nodes, the branch into characterization and the
+  ZnO/antibacterial path is shown, the two ZnO concentrations are left as placeholders (not invented). The reply
+  explains how to edit the text source and re-render.

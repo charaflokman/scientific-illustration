@@ -1,0 +1,24 @@
+{
+  "canvas": {"width_mm": 170, "height_mm": 62, "font_pt": 7},
+  "colors": {"matrix": "#56B4E9", "filler": "#E69F00", "plasticizer": "#CC79A7"},
+  "provenance": "Template: solution casting of a biopolymer/nanofiller film. Conditions on arrows must come from the user's methods text; unknown ones stay as [? ...].",
+  "elements": [
+    {"id": "p1", "type": "panel", "x": 1, "y": 1, "w": 168, "h": 38, "title": "Film fabrication (solution casting)", "fill": "#FFFFFF", "stroke": "#D0D0D0"},
+    {"id": "fab", "type": "flow", "x": 2, "y": 9, "w": 166, "h": 28, "icon_size": 17,
+     "steps": [
+       {"id": "dissolve", "icon": "stir_plate", "color": "matrix", "label": "Chitosan [? % w/v] in acetic acid [? % v/v]"},
+       {"id": "disperse", "icon": "sonicator", "color": "matrix", "accent": "filler", "label": "Add CNC [? wt%], sonicate"},
+       {"id": "plast", "icon": "beaker", "color": "plasticizer", "params": {"level": 0.5}, "label": "Add glycerol [? wt%]"},
+       {"id": "cast", "icon": "petri_dish", "color": "matrix", "accent": "filler", "params": {"particles": 30}, "label": "Cast [? mL] in Petri dish"},
+       {"id": "dry", "icon": "oven", "color": "matrix", "label": "Dry"},
+       {"id": "film", "icon": "film", "color": "matrix", "accent": "filler", "params": {"particles": 26, "shape": "rod"}, "label": "CS/CNC film"}
+     ],
+     "arrows": ["stir [? h], RT", "[? min]", "stir [? min]", "degas", "[? °C], [? h]"]},
+    {"id": "p2", "type": "panel", "x": 1, "y": 41, "w": 168, "h": 20, "title": "", "fill": "#F7F7F7", "stroke": "#D0D0D0"},
+    {"id": "ch", "type": "text", "x": 4, "y": 44, "text": "Characterisation:", "weight": "bold"},
+    {"id": "c1", "type": "icon", "icon": "spectrometer", "x": 34, "y": 44, "w": 12, "label": "FTIR / XRD", "label_pos": "right", "label_width": 18},
+    {"id": "c2", "type": "icon", "icon": "tensile_tester", "x": 64, "y": 44, "w": 12, "label": "Tensile", "label_pos": "right", "label_width": 14},
+    {"id": "c3", "type": "icon", "icon": "water_drop", "x": 90, "y": 44, "w": 12, "color": "water", "label": "Water uptake / WVP", "label_pos": "right", "label_width": 22},
+    {"id": "c4", "type": "icon", "icon": "soil_burial", "x": 124, "y": 44, "w": 12, "color": "matrix", "label": "Soil burial", "label_pos": "right", "label_width": 16}
+  ]
+}

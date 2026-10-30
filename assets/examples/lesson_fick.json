@@ -1,0 +1,16 @@
+{
+ "title": "Water diffusion in biopolymer films",
+ "subtitle": "Lesson summary · Fick's laws and how fillers slow water down",
+ "format": "a4",
+ "accent": "#0072B2",
+ "sections": [
+  {"icon": "💧", "title": "Key idea", "points": ["Water moves from high to low concentration.", "The rate is set by the diffusion coefficient D (m²/s).", "Thicker films take longer: t½ grows with L²."]},
+  {"icon": "∑", "title": "Equations", "formulas": ["J = −D · ∂C/∂x", "∂C/∂t = D · ∂²C/∂x²", "t½ ≈ 0.049 L² / D"]},
+  {"icon": "🔁", "title": "Measuring uptake", "steps": ["Dry the film to constant mass", "Immerse / expose to set humidity", "Weigh at time intervals", "Plot Mt/M∞ vs √t and fit D"]},
+  {"icon": "⚖️", "title": "Transport type (Ritger–Peppas n, thin film)", "table": [["n", "Mechanism"], ["0.5", "Fickian"], ["0.5 – 1.0", "Anomalous"], ["1.0", "Case II (relaxation)"]]},
+  {"icon": "🧠", "title": "What changes D", "map": {"center": "D", "nodes": ["Temperature", "Crystallinity", "Filler tortuosity", "Crosslinking", "Plasticizer", "Hydrophilicity"]}, "wide": true},
+  {"icon": "⚠️", "title": "Common mistakes", "tone": "warn", "points": ["Using wet thickness instead of dry thickness.", "Fitting beyond Mt/M∞ ≈ 0.6 with the short-time equation.", "Calling n = 0.45 'Fickian' for a cylinder or sphere without checking geometry."]}
+ ],
+ "takeaway": "Well-dispersed platelets or rods make the water path longer, so D drops; agglomerates waste that effect.",
+ "source": "Crank, The Mathematics of Diffusion (2nd ed., 1975); Ritger & Peppas, J. Control. Release 5 (1987) 23–36"
+}

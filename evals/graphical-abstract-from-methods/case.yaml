@@ -1,0 +1,8 @@
+schema_version: "1.1"
+name: graphical-abstract-from-methods
+expected_outcome: |
+  An editable vector graphical abstract (SVG with real text, plus PNG) showing the casting workflow in order with
+  the stated conditions on or next to the arrows (2% w/v, 1% acetic acid, 24 h RT, 1/3/5 wt% CNC, 10 min sonication,
+  30 wt% glycerol, 30 min, 25 mL, 9 cm dish, 40 C, 50% RH) and the four characterization methods. The drying time is
+  not given and must appear as a visible placeholder, not an invented value. No property improvements are claimed
+  because the paragraph reports none. The reply (in Arabic) gives full file paths and explains how to edit.

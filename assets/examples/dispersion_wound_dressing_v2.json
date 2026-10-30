@@ -1,0 +1,55 @@
+{
+  "canvas": {"width_mm": 180, "height_mm": 132, "font_pt": 7},
+  "colors": {"matrix": "#56B4E9", "filler": "#E69F00", "coat": "#009E73", "bad": "#D55E00"},
+  "provenance": "From the user's review paragraph on organosilane dispersants in wound dressings ([181]-[195]). Schematic; only values stated in the text. Skin, cell and bacterium art: Servier Medical Art (CC BY 4.0).",
+  "elements": [
+    {"id": "pA", "type": "panel", "x": 2, "y": 2, "w": 87, "h": 66, "letter": "(a)", "title": "With organosilane dispersant", "fill": "#F1F8F5", "title_bar": "#D3ECE2"},
+    {"id": "pB", "type": "panel", "x": 91, "y": 2, "w": 87, "h": 66, "letter": "(b)", "title": "Without dispersant", "fill": "#FDF4EC", "title_bar": "#F8E1CB"},
+
+    {"id": "skinA", "type": "image", "path": "art/Dermatology_s4_1.png", "x": 4, "y": 22, "w": 60, "h": 40.8, "license": "cc-by-4.0", "author": "Servier Medical Art", "label_pos": "none"},
+    {"id": "dressA", "type": "icon", "icon": "film_cross_section", "x": 14, "y": 24, "w": 44, "h": 7, "color": "matrix", "accent": "filler",
+     "params": {"particles": 26, "dispersion": "uniform", "particle_r": 1.3}, "label": "Dressing", "label_pos": "left", "label_width": 12},
+    {"id": "zoomA", "type": "icon", "icon": "coated_nanoparticle", "x": 67, "y": 20, "w": 19, "h": 19, "color": "coat", "accent": "filler",
+     "label": "Silane shell → compatible with polymer", "label_width": 22},
+    {"id": "zA", "type": "arrow", "from": "dressA", "to": "zoomA", "style": "dashed", "curve": -0.2},
+    {"id": "kA", "type": "text", "x": 45.5, "y": 65, "anchor": "middle", "weight": "bold", "color": "#007A5A", "text": "Uniform dose and properties [192], [193]"},
+
+    {"id": "skinB", "type": "image", "path": "art/Dermatology_s4_1.png", "x": 93, "y": 22, "w": 60, "h": 40.8, "license": "cc-by-4.0", "author": "Servier Medical Art", "label_pos": "none"},
+    {"id": "dressB", "type": "icon", "icon": "film_cross_section", "x": 103, "y": 24, "w": 44, "h": 7, "color": "matrix", "accent": "filler",
+     "params": {"particles": 34, "dispersion": "agglomerated", "particle_r": 1.3}, "seed": 4, "label": "Dressing", "label_pos": "left", "label_width": 12},
+    {"id": "zoomB", "type": "icon", "icon": "agglomerate", "x": 156, "y": 20, "w": 19, "h": 19, "accent": "filler", "label": "Loose agglomerate", "label_width": 22},
+    {"id": "zB", "type": "arrow", "from": "dressB", "to": "zoomB", "style": "dashed", "curve": -0.2},
+    {"id": "kB", "type": "text", "x": 134.5, "y": 65, "anchor": "middle", "weight": "bold", "color": "#B34700", "text": "Not cosmetic: five failure modes ↓"},
+
+    {"id": "pC", "type": "panel", "x": 2, "y": 71, "w": 176, "h": 47, "letter": "(c)", "title": "Failure modes of poor dispersion", "fill": "#FAFAFA", "title_bar": "#ECECEC"},
+
+    {"id": "f1", "type": "icon", "icon": "crack", "x": 7, "y": 82, "w": 26, "h": 17, "color": "matrix", "accent": "filler", "label_pos": "none"},
+    {"id": "f1t", "type": "text", "x": 20, "y": 105, "w": 33, "anchor": "middle", "weight": "bold", "text": "① Cracking on flexion & removal"},
+    {"id": "f1r", "type": "text", "x": 20, "y": 113, "anchor": "middle", "font_pt": 6, "color": "#666666", "text": "stress concentration [192]"},
+
+    {"id": "f2a", "type": "image", "path": "art/Dermatology_s5_3.png", "x": 40, "y": 81, "w": 15, "h": 11.8, "license": "cc-by-4.0", "author": "Servier Medical Art", "label_pos": "none"},
+    {"id": "f2x", "type": "icon", "icon": "cross", "x": 51, "y": 80, "w": 5, "h": 5, "label_pos": "none"},
+    {"id": "f2b", "type": "image", "path": "art/Infectiology_s17_1.png", "x": 58, "y": 85, "w": 12, "h": 13.3, "license": "cc-by-4.0", "author": "Servier Medical Art", "label_pos": "none"},
+    {"id": "f2t", "type": "text", "x": 55, "y": 105, "w": 34, "anchor": "middle", "weight": "bold", "text": "② Cytotoxic hot spots, surviving bacteria"},
+    {"id": "f2r", "type": "text", "x": 55, "y": 113, "anchor": "middle", "font_pt": 6, "color": "#666666", "text": "uneven local dose [194]"},
+
+    {"id": "f3", "type": "icon", "icon": "drug_release", "x": 80, "y": 81, "w": 20, "h": 19, "color": "bad", "params": {"kind": "burst"}, "label_pos": "none"},
+    {"id": "f3t", "type": "text", "x": 90, "y": 105, "w": 33, "anchor": "middle", "weight": "bold", "text": "③ Burst, then sub-therapeutic"},
+    {"id": "f3r", "type": "text", "x": 90, "y": 113, "anchor": "middle", "font_pt": 6, "color": "#666666", "text": "surface-held drug [195]"},
+
+    {"id": "f4", "type": "image", "path": "art/Dermatology_s11_3.png", "x": 117, "y": 79, "w": 13, "h": 21.3, "license": "cc-by-4.0", "author": "Servier Medical Art", "label_pos": "none"},
+    {"id": "f4p", "type": "icon", "icon": "agglomerate", "x": 129, "y": 84, "w": 7, "h": 7, "accent": "filler", "params": {"particles": 6}, "label_pos": "none"},
+    {"id": "f4a", "type": "arrow", "from": "f4p", "to": [124, 94], "color": "#D55E00", "curve": 0.3},
+    {"id": "f4t", "type": "text", "x": 125, "y": 105, "w": 33, "anchor": "middle", "weight": "bold", "text": "④ Particles leach into exudate & tissue"},
+    {"id": "f4r", "type": "text", "x": 125, "y": 113, "anchor": "middle", "font_pt": 6, "color": "#666666", "text": "no covalent anchoring [185]"},
+
+    {"id": "f5", "type": "icon", "icon": "silica_network", "x": 150, "y": 81, "w": 20, "h": 19, "color": "matrix", "accent": "coat", "params": {"coupled": false}, "label_pos": "none"},
+    {"id": "f5t", "type": "text", "x": 160, "y": 105, "w": 33, "anchor": "middle", "weight": "bold", "text": "⑤ Phases dissolve at different rates"},
+    {"id": "f5r", "type": "text", "x": 160, "y": 113, "anchor": "middle", "font_pt": 6, "color": "#666666", "text": "uncoupled hybrid [190]"},
+
+    {"id": "verify", "type": "box", "x": 2, "y": 120, "w": 176, "h": 8.5, "fill": "#E8F1FA", "stroke": "#0072B2", "text": ""},
+    {"id": "vIcon", "type": "icon", "icon": "micrograph", "x": 5, "y": 121, "w": 10, "h": 6.5, "params": {"particles": 8}, "label_pos": "none"},
+    {"id": "vText", "type": "text", "x": 18, "y": 124.3, "valign": "middle", "weight": "bold", "color": "#0B4F7C",
+     "text": "Verify dispersion by TEM/SEM image analysis of particle size and spacing — do not assume it from the formulation."}
+  ]
+}

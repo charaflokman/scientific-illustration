@@ -1,0 +1,7 @@
+{"accent":"#009E73","credits":"Art: Servier Medical Art (CC BY 4.0) · rendered with Remotion",
+ "scenes":[
+  {"type":"title","title":"Organosilanes in wound dressings","subtitle":"Coupling agent · dispersant · surfactant","seconds":3},
+  {"type":"image","src":"hero_dressing.png","title":"Three layers","caption":"Silane monolayer on a composite of nanocellulose and silver nanoparticles","zoom":1.1,"seconds":5},
+  {"type":"bullets","title":"What the silane does","points":["Bonds inorganic surfaces to the polymer","Keeps nanoparticles evenly dispersed","Caps silver particles to stop growth"],"seconds":6},
+  {"type":"image","src":"silane_roles.png","title":"Full figure","zoom":1.04,"seconds":5}
+ ]}
