@@ -80,9 +80,9 @@ Then ask in plain words, in English or Arabic:
 
 > *"Make a graphical abstract from this methods section"* · *"Plot my FTIR and TGA CSVs as panels (a) and (b)"* · *"اعمل لي ملخص لهذا الدرس"* (“Summarise this lesson for me”)
 
-## Free art libraries (8,806 drawings)
+## Free art libraries (about 23,000 drawings)
 
-`python scripts/library.py fetch` downloads them once; `library.py search fibroblast` searches all of them. Credits are added to the figure automatically.
+`python scripts/library.py fetch` downloads them once (`--only reactome phylopic` for a subset); `library.py search fibroblast` searches all of them. Credits are added to the figure automatically.
 
 | Library | Licence | Drawings |
 |---|---|---:|
@@ -90,6 +90,9 @@ Then ask in plain words, in English or Arabic:
 | [DBCLS TogoTV](https://togotv.dbcls.jp) | CC BY 4.0 | 2,069 |
 | [Bioicons](https://bioicons.com) | per icon | 2,830 |
 | [Health Icons](https://healthicons.org) | CC0 | 2,106 |
+| [Reactome Icon Library](https://reactome.org/icon-lib) — proteins, receptors, transporters, drugs, cell types | CC BY 4.0 | 2,571 |
+| [SciDraw](https://scidraw.io) — neuroscience, lab animals, behaviour setups (each with a DOI) | CC BY 4.0 / CC0 | 614 |
+| [PhyloPic](https://www.phylopic.org) — organism silhouettes across the tree of life (non-commercial and share-alike images are skipped) | CC0 / CC BY | 11,207 |
 
 ## Limitations
 
@@ -109,7 +112,7 @@ Then ask in plain words, in English or Arabic:
 ## Licence and citation
 
 - **Code:** [MIT](LICENSE). Figures you make are yours.
-- **Library art:** CC BY 4.0 (Servier, TogoTV) or CC0 (Health Icons) — keep the credit line the skill adds.
+- **Library art:** CC BY 4.0 (Servier, TogoTV, Reactome, most SciDraw), CC0 / CC BY (PhyloPic, Bioicons) or CC0 (Health Icons) — keep the credit line the skill adds.
 - **Video:** rendered with [Remotion](https://remotion.dev), free for individuals and teams of up to 3; larger companies need a [Remotion licence](https://remotion.dev/license).
 
 If it helped your paper, please cite it — see [`CITATION.cff`](CITATION.cff) (GitHub shows a “Cite this repository” button).

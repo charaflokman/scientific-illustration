@@ -77,8 +77,12 @@ medical illustrators, CC BY 4.0; the credits line is added automatically). Run `
 the candidate PNGs, then `servier.py get` for a ready `image` element. If the library is missing, run
 `servier.py fetch Dermatology Infectiology Intracellular-components Medical-equipment` (Windows + PowerPoint).
 For anything else, search all free libraries at once with `scripts/library.py search <terms>` (Servier
-Medical Art, DBCLS TogoTV, Bioicons, Health Icons; licence shown per hit; `library.py get <key>` copies a
-sanitised file and prints the spec element). First-time setup: `library.py fetch` (≈1 GB cache).
+Medical Art, DBCLS TogoTV, Reactome, Bioicons, SciDraw, Health Icons, PhyloPic; licence shown per hit;
+`library.py get <key>` copies a sanitised file and prints the spec element). First-time setup: `library.py fetch`
+(≈1.5 GB cache; `--only reactome phylopic` for a subset). Reactome is the place for named proteins, receptors,
+transporters, drugs and cell types (search the gene or protein name, e.g. ACE2, EGFR, insulin); SciDraw for
+neuroscience, lab animals and behaviour setups; PhyloPic for any organism as a silhouette, searched by its
+scientific name (Chiroptera, Manis, Arabidopsis), which suits ecology, evolution and One Health figures.
 Use code-drawn icons only for materials parts the libraries lack (films, fillers, networks, curves). Compose as a
 scene: one large hero illustration per panel, short labels (≤ 6 words), details and numbers in the caption.
 Example: `assets/examples/dispersion_wound_dressing_v2.json`.

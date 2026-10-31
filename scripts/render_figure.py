@@ -168,7 +168,13 @@ def embed_svg_file(path, x, y, w, h, prefix):
     if not m:
         raise ValueError(f"not an SVG: {path}")
     attrs, body = m.group(1), m.group(2)
-    vb = re.search(r'viewBox="([^"]+)"', attrs)
+    # editor metadata (Inkscape, Sodipodi, Affinity/Serif, Illustrator...) uses namespace prefixes declared on the
+    # source <svg>; once embedded those declarations are gone and strict XML parsers reject the figure
+    body = re.sub(r"<metadata\b.*?</metadata>", "", body, flags=re.S)
+    body = re.sub(r"<(?!xlink:)(\w+):[\w.-]+\b[^>]*/>", "", body, flags=re.S)
+    body = re.sub(r"<((?!xlink:)\w+:[\w.-]+)\b[^>]*>.*?</\1>", "", body, flags=re.S)
+    body = re.sub(r'\s(?!xlink:|xml:)\w+:[\w.-]+\s*=\s*("[^"]*"|\'[^\']*\')', "", body)
+    vb = re.search(r'viewBox=["\']([^"\']+)["\']', attrs)
     if vb:
         viewbox = vb.group(1)
     else:

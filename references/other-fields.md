@@ -19,6 +19,11 @@ quickest faithful way to build each. The honesty rules from SKILL.md apply uncha
   consistently (receptor, kinase, TF, output).
 - **Cell / tissue / organism cartoons:** Bioicons (cells, organelles, organs, mice, bacteria; prefer cc-0, credit
   CC-BY such as Servier Medical Art). Built-in `cell`, `bacterium` for simple cases.
+- **Named proteins, receptors, transporters, drugs:** Reactome via `library.py search <gene/protein> --lib reactome`
+  (CC BY 4.0, credited automatically).
+- **Whole organisms (ecology, evolution, zoology, botany, One Health):** PhyloPic silhouettes via
+  `library.py search <scientific name> --lib phylopic` (black silhouettes; use one per taxon, label with the name).
+- **Neuroscience and behaviour setups, lab animals:** SciDraw via `library.py search <term> --lib scidraw`.
 - **Experimental design / animal study timelines:** Diagram mode (Mermaid `timeline` or `gantt`) or a `flow` with
   time labels on arrows; group sizes `n = [?]` unless given.
 - **PRISMA 2020 flow:** Diagram mode template in `references/diagram-mode.md`; every count from the user.
