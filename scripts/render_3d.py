@@ -26,6 +26,7 @@ Positions are generated deterministically from `seed`, so a re-render gives the 
 """
 import argparse
 import json
+import os
 import sys
 from pathlib import Path
 
@@ -272,6 +273,8 @@ def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("spec")
     ap.add_argument("-o", "--out")
+    ap.add_argument("--blender", metavar="WxH", help="photoreal PNG with Blender Cycles (GPU if available), e.g. 2400x1700")
+    ap.add_argument("--samples", type=int, default=192, help="Cycles samples for --blender (more = cleaner, slower)")
     ap.add_argument("--png", metavar="WxH", help="also render a transparent PNG without labels, e.g. 2400x1600 (for compositing)")
     a = ap.parse_args()
     spec = json.loads(Path(a.spec).read_text(encoding="utf-8"))
@@ -288,6 +291,23 @@ def main():
     print(f"3D scene: {out.resolve()}")
     if ph:
         print("placeholders to confirm:", "; ".join(ph))
+    if a.blender:
+        import shutil
+        import subprocess
+        exe = os.environ.get("BLENDER") or shutil.which("blender") or next(
+            (str(p) for p in sorted(Path(os.environ.get("ProgramFiles", "C:/Program Files"), "Blender Foundation").glob("Blender*/blender.exe"))[::-1]), None)
+        if not exe:
+            sys.exit("Blender not found: install it (blender.org) or set BLENDER=path/to/blender")
+        resolved = out.with_suffix(".resolved.json")
+        resolved.write_text(json.dumps(spec), encoding="utf-8")
+        w, h = a.blender.lower().split("x")
+        png = out.with_name(out.stem + "_render.png").resolve()
+        r = subprocess.run([exe, "-b", "--factory-startup", "-P", str(Path(__file__).with_name("render_blender.py")), "--",
+                            str(resolved.resolve()), str(png), w, h, str(a.samples)], capture_output=True, text=True)
+        line = [l for l in r.stdout.splitlines() if l.startswith("BLENDER_PNG")]
+        if not line:
+            sys.exit("Blender render failed: " + (r.stderr or r.stdout)[-2500:])
+        print("Photoreal PNG:", png, "(" + line[0].split()[-1] + ")")
     if a.png:
         w, h = (int(v) for v in a.png.lower().split("x"))
         from playwright.sync_api import sync_playwright
