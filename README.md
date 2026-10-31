@@ -9,7 +9,7 @@ An open-source skill for AI coding agents that turns a paragraph of your paper i
 
 [![Licence: MIT](https://img.shields.io/badge/code-MIT-E9B949)](LICENSE)
 [![Art: CC BY 4.0](https://img.shields.io/badge/art-CC%20BY%204.0%20%2F%20CC0-0F1115)](#free-art-libraries-8806-drawings)
-[![Version](https://img.shields.io/badge/version-1.0.0-0F1115)](CHANGELOG.md)
+[![Version](https://img.shields.io/badge/version-1.1.0-0F1115)](CHANGELOG.md)
 [![Website](https://img.shields.io/badge/website-live-E9B949)](https://charaflokman.github.io/scientific-illustration/)
 
 <img src="docs/gallery/video_demo.gif" width="760" alt="Animated preview: a typed prompt about wound-dressing dispersants turns into a three-panel scientific figure, followed by a comparison with a quick slide sketch.">
@@ -32,6 +32,8 @@ An open-source skill for AI coding agents that turns a paragraph of your paper i
 | A process simulation | Interactive HTML with sliders | ✅ |
 | A short video | MP4 with an original soundtrack (Remotion) | ✅ change the JSON, re-render |
 
+**Researches first:** give it just a topic ("a figure on ferroptosis") and it pulls recent, highly cited papers from OpenAlex, Europe PMC and Wikipedia (free, no key), then draws only what the sources support and cites them as [n].
+**Two levels:** a *simple* version (one message, 3–6 elements, for slides and teaching) or a *detailed* one (multi-panel, values, references, for papers) — or both from the same spec.
 **Two styles:** *Academic* (clean, publication-ready) or *Pixel art* (game look, for social media and teaching) — the skill asks which you want.
 **You don't need to name the format.** The skill reads what you attach, where it will be used and how you ask, then picks and tells you its choice.
 
@@ -76,9 +78,9 @@ python ~/.claude/skills/scientific-illustration/scripts/setup_check.py
 
 Other agents: clone into `~/.codex/skills/`, `~/.gemini/skills/` or `.agents/skills/`, or point your agent at [`AGENTS.md`](AGENTS.md). Works with Claude Code, Codex CLI, Gemini CLI, Cursor, Copilot, Cline, OpenCode and others, with any model.
 
-Then ask in plain words, in English or Arabic:
+Then ask in plain words, in any language:
 
-> *"Make a graphical abstract from this methods section"* · *"Plot my FTIR and TGA CSVs as panels (a) and (b)"* · *"اعمل لي ملخص لهذا الدرس"* (“Summarise this lesson for me”)
+> *"Make a graphical abstract from this methods section"* · *"Plot my FTIR and TGA CSVs as panels (a) and (b)"* · *"Summarise this lesson as one card"* — in any language
 
 ## Free art libraries (about 23,000 drawings)
 

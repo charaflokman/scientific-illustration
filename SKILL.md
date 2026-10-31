@@ -1,6 +1,6 @@
 ---
 name: scientific-illustration
-description: Professional scientific illustration (BioRender-quality, code-drawn and editable), 3D models and 3D images, and attractive lesson summaries. Turn research content into editable, publication-ready scientific figures, text-to-diagram visuals and interactive process simulations, for researchers in any field (chemistry, biology, physics, materials, medicine, engineering) with special depth in biopolymer composites. Use it whenever the user wants a graphical abstract, fabrication or synthesis scheme, mechanism or interaction schematic, comparison panel (with vs without, treated vs untreated), PRISMA or study-design flow, signaling pathway, experimental-setup drawing, a plot or multi-panel figure of their data (FTIR, XRD, TGA/DTG, DSC, tensile, swelling, release, any CSV/Excel), a flowchart, mind map or concept map from pasted text, or a simulation/animation of a process (diffusion, water uptake, swelling, crosslinking, degradation, filler dispersion, release kinetics), even if they never say "figure". Also use it when the user wants to edit or restyle a figure made earlier, asks for an alternative to BioRender, FigureLabs or Napkin, or writes in Arabic, e.g. "اعمل لي شكل علمي", "ملخص رسومي", "مخطط من النص", "ارسم بياناتي", "محاكاة لعملية", "عدّل على الشكل", "نموذج ثلاثي الأبعاد", "صورة 3D", "لخص لي الدرس", "اعمل فيديو", "مونتاج". Also use it for short explainer or lesson videos (MP4) built from these figures. Typical cues: chitosan, cellulose/CNC, starch, alginate, PLA, PHA, nanofiller, film, membrane, hydrogel, characterization.
+description: Professional scientific illustration (BioRender-quality, code-drawn and editable), 3D models and 3D images, and attractive lesson summaries. Turn research content into editable, publication-ready scientific figures, text-to-diagram visuals and interactive process simulations, for researchers in any field (chemistry, biology, physics, materials, medicine, engineering) with special depth in biopolymer composites. Use it whenever the user wants a graphical abstract, fabrication or synthesis scheme, mechanism or interaction schematic, comparison panel (with vs without, treated vs untreated), PRISMA or study-design flow, signaling pathway, experimental-setup drawing, a plot or multi-panel figure of their data (FTIR, XRD, TGA/DTG, DSC, tensile, swelling, release, any CSV/Excel), a flowchart, mind map or concept map from pasted text, or a simulation/animation of a process (diffusion, water uptake, swelling, crosslinking, degradation, filler dispersion, release kinetics), even if they never say "figure". Also use it when the user wants to edit or restyle a figure made earlier, or asks for an alternative to BioRender, FigureLabs or Napkin, in any language. Also use it for short explainer or lesson videos (MP4) built from these figures, and when the user only names a topic ("a figure about ferroptosis") — it researches the topic first. Typical cues: chitosan, cellulose/CNC, starch, alginate, PLA, PHA, nanofiller, film, membrane, hydrogel, characterization.
 ---
 
 # Scientific Illustration
@@ -19,15 +19,28 @@ image-generation tools, so protect them in every deliverable:
    colour-blind-safe palette, plus a disclosure sentence. Publishers restrict AI-generated images
    (see `references/publishing-policy.md`).
 
-Reply in the user's language (Arabic for this user); keep figure text in English unless asked, because journals
-expect it.
+Reply in the user's language, whatever it is. Keep figure text in English unless the user asks otherwise, because
+journals expect it; lesson summaries and teaching material follow the user's language.
 
-## Ask the style first: academic or pixel art
+## Ask style and level first
 
-At the start of a new visual (not an edit), ask one short question unless the user already said:
-"Academic style (clean, publication-ready) or pixel-art style (retro, game-like, for social media and teaching)?"
-In Arabic: "تفضّل الأسلوب الأكاديمي (نظيف وجاهز للنشر) أم أسلوب البكسل آرت (ريترو، مناسب للسوشيال ميديا والتعليم)؟"
-Default to academic for journals, theses and posters if they don't answer.
+At the start of a new visual (not an edit), ask one short question with two choices, unless the user already said:
+"Academic or pixel-art style? And a simple version or a detailed one?" Defaults if they don't answer: academic, and
+simple for slides, students and social media, detailed for journals, theses and reviews. Offer the other level as a
+follow-on, since both come from the same spec.
+
+| | **Simple** | **Detailed** |
+|---|---|---|
+| Purpose | one message at a glance (slides, teaching, abstract thumbnail, social) | the full mechanism for experts (paper, thesis, review) |
+| Content | 3–6 elements, one panel, the main idea only | multi-panel (a)(b)(c), insets/zooms, intermediate steps, conditions |
+| Text | 1–3-word labels, no references | labels + short notes, values and units, reference numbers [n] |
+| Art | large icons, few colours, generous white space | full library art, molecular detail, legends, scale bars |
+| Data | none or one key number | every stated value; `[? …]` placeholders for missing ones |
+
+Build the detailed spec first when both are wanted, then derive the simple one by removing panels and notes (keep
+ids and colours so the two look like a family). For lesson summaries: simple = key ideas + one equation + takeaway;
+detailed = all cards (equations, steps, table, concept map, mistakes, sources). For video: simple ≈ 20 s, 5 scenes;
+detailed ≈ 45–60 s with comparison, numbers and zooms.
 
 **Pixel art:** draw the scene natively with `scripts/pixel_scene.py` (JSON spec → crisp game-style PNG). Never
 convert a finished image with a pixelate filter: users judged that look noisy and unclear. The renderer applies
@@ -39,9 +52,27 @@ Example: `assets/examples/dressing_pixel.json`. Render, look at it, move any lab
 wrong thing, then render again. For video, render each pixel scene and sequence them with `render_video.py`.
 Pixel art is for engagement and teaching; tell the user it is not suitable for journal figures.
 
+## Research the topic before drawing
+
+When the user gives only a topic or a thin description ("a figure on ferroptosis", "explain PLA degradation"), do not
+draw from memory. Research first, then draw, so every element and label is backed by a source:
+
+1. `python scripts/research.py "<topic>" --n 8` — free scholarly sources, no API key: OpenAlex (papers, open-access
+   links, citation counts), Europe PMC / PubMed (biomedical abstracts) and Wikipedia (a plain overview). It prints a
+   short brief: definition, key mechanisms/steps named in recent highly cited abstracts, and a numbered reference list
+   with DOIs. `--recent 5` limits to the last 5 years; `--review` prefers review articles; `--json` for raw records.
+2. If the harness has its own web search (or the agent-reach skill), use it too for very recent or non-academic facts.
+3. Read the brief, pick the elements the figure needs, and put the reference numbers in the spec (labels at the
+   detailed level, `provenance` always). Tell the user in two or three lines what you found and which sources you
+   used, and flag anything contested.
+4. When the user supplies their own text, data or paper, that material wins: research only to fill gaps they ask
+   about, and never overwrite their numbers.
+
+Never invent a mechanism step, value or citation; if the sources disagree or are silent, show `[? …]` and say so.
+
 ## Infer the output before asking
 
-Users rarely name the output type ("اعمل لي شي عن الدرس", "need something for my thesis defence"). Work it out from
+Users rarely name the output type ("something about the lesson", "need something for my thesis defence"). Work it out from
 these signals, in this order, and say your choice in one line so they can redirect ("I'll make a 3D render + a figure"):
 
 1. **What they attached.** CSV/Excel/instrument export → data plot. A paper or review paragraph → figure or graphical
@@ -50,8 +81,8 @@ these signals, in this order, and say your choice in one line so they can redire
    submission → figure at the journal's size. Class, revision, students → lesson summary. Slides, defence, conference
    talk → figure or 3D image at 16:9, plus a video if they want it to play. Social media, YouTube, WhatsApp → video
    (vertical 1080×1920 for reels). Website or teaching where people click → 3D page or simulation.
-3. **The verb.** "ارسم/شكل/figure/scheme" → figure. "لخص/summarise" → lesson summary. "حرّك/فيديو/animate/montage"
-   → video. "خليني أشوف كيف/play with/what happens if" → simulation. "3D/مجسم/ثلاثي الأبعاد" → 3D.
+3. **The verb** (in whatever language). Draw / figure / scheme → figure. Summarise → lesson summary. Animate / video /
+   montage → video. "Let me see how" / play with / what happens if → simulation. 3D / model / render → 3D.
 4. **The content's shape.** Steps in sequence → diagram. Layers, particles, structures in space → 3D. With vs
    without → comparison figure. Equations and definitions → lesson summary. Change over time → simulation or video.
 
@@ -217,7 +248,7 @@ peak/feature table with sources and confidence levels.
 - Never alter, enhance or generate micrographs, blots, spectra or photos.
 
 ## Files in this skill
-- `scripts/render_figure.py` spec → SVG + editor · `scripts/icons.py` built-in icons · `scripts/editor.html`
+- `scripts/research.py` topic research (OpenAlex, Europe PMC, Wikipedia) · `scripts/render_figure.py` spec → SVG + editor · `scripts/icons.py` built-in icons · `scripts/editor.html`
   editor template · `scripts/export.py` PNG/PDF + layout check · `scripts/plot_data.py` data plots/panels ·
   `scripts/render_diagram.py` Mermaid/D2/Graphviz · `scripts/bioicons.py` icon search/fetch with licences ·
   `scripts/setup_check.py` dependency report · `scripts/render_3d.py` 3D scenes · `scripts/render_summary.py`

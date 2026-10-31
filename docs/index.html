@@ -159,7 +159,7 @@
 
 <section aria-label="Key numbers"><div class="wrap">
   <div class="stats reveal">
-    <div class="stat"><b>8,806</b><span>free professional drawings, searchable</span></div>
+    <div class="stat"><b>23k</b><span>free professional drawings, searchable</span></div>
     <div class="stat"><b>7</b><span>output types, from SVG to MP4</span></div>
     <div class="stat"><b>2</b><span>styles: academic and pixel art</span></div>
     <div class="stat"><b><i>$</i>0</b><span>no account, no subscription</span></div>
@@ -215,6 +215,11 @@
     <div class="card"><span class="n mono">05</span><h3>Lesson summaries</h3><p>One card per lesson: key ideas, equations, steps, tables, common mistakes.</p><div class="out">HTML · PNG · PDF</div></div>
     <div class="card"><span class="n mono">06</span><h3>Video &amp; simulations</h3><p>Motion-graphics explainers with an original soundtrack, and interactive process simulations.</p><div class="out">MP4 · HTML</div></div>
   </div>
+  <div class="grid3 reveal" style="margin-top:24px">
+    <div class="card"><span class="n mono">+</span><h3>Researches the topic</h3><p>Name only a topic: it reads recent, highly cited papers (OpenAlex, Europe PMC, Wikipedia — free, no key) and cites them as [n].</p></div>
+    <div class="card"><span class="n mono">+</span><h3>Simple or detailed</h3><p>One clear message for slides and students, or the full multi-panel mechanism with values and references — or both from one spec.</p></div>
+    <div class="card"><span class="n mono">+</span><h3>Any language</h3><p>Ask in your language; it answers in it. Figure labels stay in English for journals unless you want otherwise.</p></div>
+  </div>
 </div></section>
 
 <section id="gallery"><div class="wrap">
@@ -232,7 +237,7 @@
   <div class="kicker mono">How it works</div>
   <h2>Code, not pixels. <em>So you can edit it.</em></h2>
   <ol class="steps reveal">
-    <li><h3>You describe</h3><p>Paste a paragraph, attach data or notes, or say what you need — in English or Arabic. It asks one question: academic or pixel-art style.</p></li>
+    <li><h3>You describe</h3><p>Paste a paragraph, attach data — or just name a topic, and it researches recent papers first. Any language. It asks one question: which style, simple or detailed.</p></li>
     <li><h3>The agent writes a spec</h3><p>A short JSON file. Cheap in tokens, and the same spec always gives the same result.</p></li>
     <li><h3>Scripts render it</h3><p>Python and Node turn it into SVG, PDF, 3D, PNG or MP4. It looks at the result, fixes overlaps, then hands it to you with the spec.</p></li>
   </ol>
@@ -256,20 +261,23 @@ python ~/.claude/skills/scientific-illustration/scripts/setup_check.py</span></p
 <pre class="plain"><span class="c"># then just ask your agent</span>
 "Make a graphical abstract from this methods section"
 "Plot my FTIR and TGA CSVs as panels (a) and (b)"
-"اعمل لي ملخص لهذا الدرس"  <span class="c">→ "Summarise this lesson for me"</span></pre>
+"Summarise this lesson as one card"  <span class="c"># any language works</span></pre>
   </div>
 </div></section>
 
 <section><div class="wrap two">
   <div>
     <div class="kicker mono">Free art libraries</div>
-    <h2>8,806 drawings, <em>credited for you</em>.</h2>
+    <h2>~23,000 drawings, <em>credited for you</em>.</h2>
     <table>
       <tr><th>Library</th><th>Licence</th><th style="text-align:right">Drawings</th></tr>
       <tr><td><a href="https://smart.servier.com">Servier Medical Art</a><br><span style="color:var(--dim);font-size:14px">searched first — drawn by medical illustrators</span></td><td>CC BY 4.0</td><td class="num">1,801</td></tr>
       <tr><td><a href="https://togotv.dbcls.jp">DBCLS TogoTV</a></td><td>CC BY 4.0</td><td class="num">2,069</td></tr>
       <tr><td><a href="https://bioicons.com">Bioicons</a></td><td>per icon</td><td class="num">2,830</td></tr>
       <tr><td><a href="https://healthicons.org">Health Icons</a></td><td>CC0</td><td class="num">2,106</td></tr>
+      <tr><td><a href="https://reactome.org/icon-lib">Reactome</a><br><span style="color:var(--dim);font-size:14px">proteins, receptors, drugs, cell types</span></td><td>CC BY 4.0</td><td class="num">2,571</td></tr>
+      <tr><td><a href="https://scidraw.io">SciDraw</a><br><span style="color:var(--dim);font-size:14px">neuroscience, lab animals, setups</span></td><td>CC BY / CC0</td><td class="num">614</td></tr>
+      <tr><td><a href="https://www.phylopic.org">PhyloPic</a><br><span style="color:var(--dim);font-size:14px">organism silhouettes, by taxon name</span></td><td>CC0 / CC BY</td><td class="num">11,207</td></tr>
     </table>
     <div class="note"><b>Licences in one line:</b> code MIT · library art CC BY 4.0 or CC0 · video rendering uses Remotion (free for individuals and teams of up to 3; larger companies need a Remotion licence). Figures you make are yours. If a figure uses CC BY art, keep the credit line the skill adds (e.g. “Art: Servier Medical Art, CC BY 4.0”) in your figure or caption.</div>
   </div>

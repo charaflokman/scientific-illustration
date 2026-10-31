@@ -11,3 +11,10 @@ First public release.
 - Video with Remotion: `pro` motion-graphics template (input→output demo, comparison, counters, bars, showcases, montage, call to action) and an original synthesised soundtrack (`make_audio.py`).
 - Unified search over 8,806 free drawings (Servier Medical Art, DBCLS TogoTV, Bioicons, Health Icons) with automatic credits.
 - Works with any agent that can run commands (`AGENTS.md`).
+
+## 1.1.0 — 2026-10-31
+
+- Reactome, PhyloPic and SciDraw art libraries (~23,000 drawings in total).
+- `research.py`: researches a topic before drawing (OpenAlex, Europe PMC, Wikipedia; no API key) and returns a brief with key terms and numbered references.
+- Simple vs detailed versions: the skill asks for style and level together and can derive both from one spec.
+- Skill text is now English only and replies in the user's language.
