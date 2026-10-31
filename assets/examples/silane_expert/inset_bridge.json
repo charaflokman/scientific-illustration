@@ -1,0 +1,9 @@
+{"title":"Silane bridging on silica","background":"#EEF4F8","camera":[0,3.2,10],"fit":0.9,"ground":-0.9,
+ "objects":[
+  {"type":"slab","id":"silica","pos":[0,-0.75,0],"size":[17,1.1,6],"color":"#C9CED6","finish":"matte"},
+  {"type":"spheres","id":"si","count":260,"radius":0.3,"color":"#D9A066","seed":4,"region":[[-8.2,8.2],[-0.2,-0.2],[-2.8,2.8]]},
+  {"type":"spheres","id":"o","count":300,"radius":0.24,"color":"#E8331F","seed":9,"region":[[-8.2,8.2],[-0.15,-0.15],[-2.8,2.8]]},
+  {"type":"molecule","id":"aptes","smiles":"O[Si](O)(O)O[Si](O)(O)CCCN","anchor":1,"hydrogens":false,"pos":[-5.5,0,1],"scale":1.0},
+  {"type":"molecule","id":"gptms","smiles":"O[Si](O)(O)O[Si](O)(O)CCCOCC1CO1","anchor":1,"hydrogens":false,"pos":[-0.5,0,1],"scale":1.0},
+  {"type":"molecule","id":"qas","smiles":"O[Si](O)(O)O[Si](O)(O)CCC[N+](C)(C)CCCCCCCCCCCCCCCCCC","anchor":1,"hydrogens":false,"pos":[4.8,0,1],"scale":1.0}
+ ]}

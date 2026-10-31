@@ -1,0 +1,8 @@
+{"title":"Contact-active surface","background":"#EEF4F8","camera":[0,3.2,10],"fit":0.95,"ground":-1.2,
+ "objects":[
+  {"type":"slab","id":"coat","pos":[0,-0.6,0],"size":[12,1.0,5],"color":"#7CC6EA","opacity":0.85},
+  {"type":"brush","id":"qas","pos":[0,-0.1,0],"count":240,"length":1.6,"radius":0.03,"color":"#4A4A4A","headColor":"#4A4A4A","region":[[-5.6,5.6],[0,0],[-2.3,2.3]],"seed":3},
+  {"type":"spheres","id":"nplus","count":240,"radius":0.1,"color":"#3050F8","seed":3,"region":[[-5.6,5.6],[0.25,0.25],[-2.3,2.3]]},
+  {"type":"capsule","id":"bact","pos":[-1.2,2.55,0.4],"radius":0.55,"length":2.4,"rot":[0,0.3,1.5],"color":"#7FB069","finish":"matte"},
+  {"type":"capsule","id":"bact2","pos":[2.8,3.3,-0.8],"radius":0.5,"length":2.0,"rot":[0.5,0,0.9],"color":"#9CC48A","finish":"matte"}
+ ]}

@@ -1,0 +1,6 @@
+{"title":"Steric stabilisation","background":"#EEF4F8","camera":[0,5,9],"fit":1.0,"ground":-1.8,
+ "objects":[
+  {"type":"corona","id":"np1","pos":[-2.6,0,0],"radius":1.0,"length":0.7,"count":140,"color":"#DDE2E8","stemColor":"#2E8B6E","headColor":"#0072B2","seed":2},
+  {"type":"corona","id":"np2","pos":[2.4,0.4,-1],"radius":0.9,"length":0.7,"count":130,"color":"#DDE2E8","stemColor":"#2E8B6E","headColor":"#0072B2","seed":5},
+  {"type":"corona","id":"np3","pos":[0,-0.4,2.4],"radius":0.95,"length":0.7,"count":130,"color":"#DDE2E8","stemColor":"#2E8B6E","headColor":"#0072B2","seed":8}
+ ]}

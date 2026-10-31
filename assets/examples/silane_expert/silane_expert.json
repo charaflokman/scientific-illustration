@@ -1,0 +1,627 @@
+{
+ "canvas": {
+  "width_mm": 180,
+  "height_mm": 160,
+  "font_pt": 6.5,
+  "background": "#FFFFFF"
+ },
+ "colors": {
+  "ink": "#0B3D5C",
+  "teal": "#1E7A8C",
+  "coat": "#2E8B6E",
+  "drug": "#14A3A3",
+  "grey": "#4B5563"
+ },
+ "provenance": "Schematic of organofunctional silanes in wound-dressing coatings. 3D molecules from SMILES (RDKit force-field geometry, all-anti chains) rendered with Three.js; 2D structures by RDKit. Reactions: standard alkoxysilane hydrolysis/condensation and oxirane ring-opening. No measured values.",
+ "elements": [
+  {
+   "id": "title",
+   "type": "text",
+   "x": 90,
+   "y": 6.5,
+   "anchor": "middle",
+   "font_pt": 9.6,
+   "weight": "bold",
+   "color": "ink",
+   "text": "Organofunctional silanes at the filler–polymer interface of antimicrobial wound-dressing coatings"
+  },
+  {
+   "id": "subtitle",
+   "type": "text",
+   "x": 90,
+   "y": 11.4,
+   "anchor": "middle",
+   "font_pt": 7,
+   "color": "grey",
+   "text": "Coupling agent, dispersant and capping agent (schematic, not to scale)"
+  },
+  {
+   "id": "legendbar",
+   "type": "box",
+   "x": 3,
+   "y": 14.5,
+   "w": 174,
+   "h": 8.5,
+   "fill": "#F1F5F8",
+   "stroke": "none",
+   "radius": 1.5,
+   "text": ""
+  },
+  {
+   "id": "lg1",
+   "type": "icon",
+   "icon": "silica_network",
+   "x": 8,
+   "y": 15,
+   "w": 7.5,
+   "h": 7.5,
+   "color": "#AEB6C2",
+   "accent": "coat",
+   "label_pos": "none"
+  },
+  {
+   "id": "lg1t",
+   "type": "text",
+   "x": 17,
+   "y": 19.3,
+   "valign": "middle",
+   "font_pt": 6,
+   "text": "Silica filler"
+  },
+  {
+   "id": "lg2",
+   "type": "icon",
+   "icon": "polymer_chain",
+   "x": 40,
+   "y": 15,
+   "w": 7.5,
+   "h": 7.5,
+   "color": "#C99A4B",
+   "label_pos": "none"
+  },
+  {
+   "id": "lg2t",
+   "type": "text",
+   "x": 49,
+   "y": 19.3,
+   "valign": "middle",
+   "font_pt": 6,
+   "text": "Polymer / cellulose nanocrystals"
+  },
+  {
+   "id": "lg3",
+   "type": "icon",
+   "icon": "coated_nanoparticle",
+   "x": 88,
+   "y": 15,
+   "w": 7.5,
+   "h": 7.5,
+   "color": "coat",
+   "accent": "#C9CED6",
+   "label_pos": "none"
+  },
+  {
+   "id": "lg3t",
+   "type": "text",
+   "x": 97,
+   "y": 19.3,
+   "valign": "middle",
+   "font_pt": 6,
+   "text": "Silane-capped Ag NP"
+  },
+  {
+   "id": "lg4",
+   "type": "icon",
+   "icon": "drug_molecules",
+   "x": 124,
+   "y": 15,
+   "w": 7.5,
+   "h": 7.5,
+   "color": "drug",
+   "label_pos": "none"
+  },
+  {
+   "id": "lg4t",
+   "type": "text",
+   "x": 133,
+   "y": 19.3,
+   "valign": "middle",
+   "font_pt": 6,
+   "text": "Drug"
+  },
+  {
+   "id": "lg5",
+   "type": "icon",
+   "icon": "bacterium",
+   "x": 148,
+   "y": 15,
+   "w": 7.5,
+   "h": 7.5,
+   "color": "#7FB069",
+   "label_pos": "none"
+  },
+  {
+   "id": "lg5t",
+   "type": "text",
+   "x": 157,
+   "y": 19.3,
+   "valign": "middle",
+   "font_pt": 6,
+   "text": "Bacterium"
+  },
+  {
+   "id": "pBridge",
+   "type": "panel",
+   "x": 3,
+   "y": 26,
+   "w": 60,
+   "h": 52,
+   "letter": "(a)",
+   "title": "Covalent grafting on silica",
+   "fill": "#FFFFFF",
+   "title_bar": "#E8EFF4"
+  },
+  {
+   "id": "bridgeImg",
+   "type": "image",
+   "path": "inset_bridge_crop.png",
+   "x": 4.5,
+   "y": 32.5,
+   "w": 30,
+   "h": 42.9,
+   "label_pos": "none"
+  },
+  {
+   "id": "n1",
+   "type": "text",
+   "x": 9.6,
+   "y": 57.6,
+   "font_pt": 6,
+   "weight": "bold",
+   "color": "ink",
+   "text": "1"
+  },
+  {
+   "id": "n2",
+   "type": "text",
+   "x": 15.2,
+   "y": 53.6,
+   "font_pt": 6,
+   "weight": "bold",
+   "color": "ink",
+   "text": "2"
+  },
+  {
+   "id": "n3",
+   "type": "text",
+   "x": 24.6,
+   "y": 35.6,
+   "font_pt": 6,
+   "weight": "bold",
+   "color": "ink",
+   "text": "3"
+  },
+  {
+   "id": "n4",
+   "type": "text",
+   "x": 6,
+   "y": 72.6,
+   "font_pt": 6,
+   "weight": "bold",
+   "color": "coat",
+   "text": "4"
+  },
+  {
+   "id": "bl1",
+   "type": "text",
+   "x": 36,
+   "y": 35,
+   "w": 26,
+   "font_pt": 5.5,
+   "text": "1  APTES: terminal –NH₂ reacts with, or hydrogen-bonds to, polymer functional groups"
+  },
+  {
+   "id": "bl2",
+   "type": "text",
+   "x": 36,
+   "y": 48.5,
+   "w": 26,
+   "font_pt": 5.5,
+   "text": "2  GPTMS: oxirane ring-opening by polymer –NH₂ / –OH"
+  },
+  {
+   "id": "bl3",
+   "type": "text",
+   "x": 36,
+   "y": 57.5,
+   "w": 26,
+   "font_pt": 5.5,
+   "text": "3  QAS: N⁺ proximal to the surface, C₁₈ chain distal"
+  },
+  {
+   "id": "bl4",
+   "type": "text",
+   "x": 36,
+   "y": 67,
+   "w": 26,
+   "font_pt": 5.5,
+   "color": "coat",
+   "text": "4  Siloxane (Si–O–Si) linkage to surface silanols"
+  },
+  {
+   "id": "hero",
+   "type": "image",
+   "path": "hero_dressing.png",
+   "x": 82,
+   "y": 26,
+   "w": 62,
+   "h": 43.9,
+   "label_pos": "none"
+  },
+  {
+   "id": "h1",
+   "type": "text",
+   "x": 66,
+   "y": 30,
+   "w": 20,
+   "font_pt": 5.8,
+   "weight": "bold",
+   "color": "coat",
+   "text": "Organosilane monolayer"
+  },
+  {
+   "id": "h2",
+   "type": "text",
+   "x": 66,
+   "y": 45.5,
+   "w": 20,
+   "font_pt": 5.8,
+   "weight": "bold",
+   "color": "teal",
+   "text": "Polymer–CNC composite"
+  },
+  {
+   "id": "h2d",
+   "type": "text",
+   "x": 66,
+   "y": 51.4,
+   "w": 18,
+   "font_pt": 5,
+   "color": "grey",
+   "text": "Ag NPs and drug dispersed in the matrix"
+  },
+  {
+   "id": "h3",
+   "type": "text",
+   "x": 66,
+   "y": 64,
+   "w": 20,
+   "font_pt": 5.8,
+   "weight": "bold",
+   "color": "#6B7280",
+   "text": "Porous substrate"
+  },
+  {
+   "id": "ha1",
+   "type": "arrow",
+   "from": [
+    84,
+    32.5
+   ],
+   "to": [
+    95,
+    34
+   ],
+   "color": "coat",
+   "width_mm": 0.2
+  },
+  {
+   "id": "ha2",
+   "type": "arrow",
+   "from": [
+    85,
+    47.5
+   ],
+   "to": [
+    97,
+    48
+   ],
+   "color": "teal",
+   "width_mm": 0.2
+  },
+  {
+   "id": "ha3",
+   "type": "arrow",
+   "from": [
+    83,
+    64.6
+   ],
+   "to": [
+    99,
+    62
+   ],
+   "color": "#6B7280",
+   "width_mm": 0.2
+  },
+  {
+   "id": "hm1",
+   "type": "box",
+   "x": 121,
+   "y": 27.6,
+   "w": 4.4,
+   "h": 4.4,
+   "radius": 2.2,
+   "fill": "teal",
+   "stroke": "none",
+   "text": "1",
+   "text_color": "#FFFFFF",
+   "weight": "bold",
+   "font_pt": 5.5
+  },
+  {
+   "id": "hm2",
+   "type": "box",
+   "x": 112,
+   "y": 50.5,
+   "w": 4.4,
+   "h": 4.4,
+   "radius": 2.2,
+   "fill": "coat",
+   "stroke": "none",
+   "text": "2",
+   "text_color": "#FFFFFF",
+   "weight": "bold",
+   "font_pt": 5.5
+  },
+  {
+   "id": "hm3",
+   "type": "box",
+   "x": 127,
+   "y": 50.5,
+   "w": 4.4,
+   "h": 4.4,
+   "radius": 2.2,
+   "fill": "drug",
+   "stroke": "none",
+   "text": "3",
+   "text_color": "#FFFFFF",
+   "weight": "bold",
+   "font_pt": 5.5
+  },
+  {
+   "id": "i1",
+   "type": "inset",
+   "cx": 162,
+   "cy": 43,
+   "r": 13,
+   "path": "inset_contact.png",
+   "zoom": 1.25,
+   "offset": [
+    0,
+    2
+   ],
+   "color": "teal",
+   "font_pt": 6,
+   "title": "1  Contact-active surface"
+  },
+  {
+   "id": "i1t",
+   "type": "text",
+   "x": 162,
+   "y": 59,
+   "w": 32,
+   "anchor": "middle",
+   "font_pt": 5.2,
+   "color": "#374151",
+   "text": "Immobilised cationic QAS disrupts bacterial membranes on contact; activity does not rely on biocide release"
+  },
+  {
+   "id": "i2",
+   "type": "inset",
+   "cx": 162,
+   "cy": 87,
+   "r": 13,
+   "path": "inset_steric.png",
+   "zoom": 1.15,
+   "color": "coat",
+   "font_pt": 6,
+   "title": "2  Steric stabilisation of Ag NPs"
+  },
+  {
+   "id": "i2t",
+   "type": "text",
+   "x": 162,
+   "y": 103,
+   "w": 32,
+   "anchor": "middle",
+   "font_pt": 5.2,
+   "color": "#374151",
+   "text": "Grafted silane shells prevent aggregation and limit particle growth during synthesis"
+  },
+  {
+   "id": "i3",
+   "type": "inset",
+   "cx": 162,
+   "cy": 131,
+   "r": 13,
+   "path": "inset_release.png",
+   "zoom": 1.2,
+   "color": "drug",
+   "font_pt": 6,
+   "title": "3  Diffusion-controlled release"
+  },
+  {
+   "id": "i3t",
+   "type": "text",
+   "x": 162,
+   "y": 147,
+   "w": 32,
+   "anchor": "middle",
+   "font_pt": 5.2,
+   "color": "#374151",
+   "text": "Drug and Ag⁺ release governed by diffusion through the cross-linked hybrid network"
+  },
+  {
+   "id": "pStruct",
+   "type": "panel",
+   "x": 3,
+   "y": 81,
+   "w": 60,
+   "h": 66,
+   "letter": "(b)",
+   "title": "Chemical structures",
+   "fill": "#FFFFFF",
+   "title_bar": "#E8EFF4"
+  },
+  {
+   "id": "m1",
+   "type": "molecule",
+   "smiles": "CCO[Si](CCCN)(OCC)OCC",
+   "x": 5,
+   "y": 88,
+   "w": 27,
+   "h": 19,
+   "label": "APTES",
+   "label_width": 27
+  },
+  {
+   "id": "m2",
+   "type": "molecule",
+   "smiles": "CO[Si](CCCOCC1CO1)(OC)OC",
+   "x": 33,
+   "y": 88,
+   "w": 28,
+   "h": 19,
+   "label": "GPTMS",
+   "label_width": 28
+  },
+  {
+   "id": "m3",
+   "type": "molecule",
+   "smiles": "CO[Si](CCC[N+](C)(C)CCCCCCCCCCCCCCCCCC)(OC)OC",
+   "x": 5,
+   "y": 116,
+   "w": 56,
+   "h": 20,
+   "label": "QAS (dimethyloctadecyl[3-(trimethoxysilyl)propyl]ammonium chloride)",
+   "label_width": 56
+  },
+  {
+   "id": "cl",
+   "type": "text",
+   "x": 51.5,
+   "y": 135.5,
+   "font_pt": 6,
+   "text": "Cl⁻"
+  },
+  {
+   "id": "pRx",
+   "type": "panel",
+   "x": 66,
+   "y": 81,
+   "w": 77,
+   "h": 66,
+   "letter": "(c)",
+   "title": "Grafting and coupling reactions",
+   "fill": "#FFFFFF",
+   "title_bar": "#E8EFF4"
+  },
+  {
+   "id": "rx1h",
+   "type": "text",
+   "x": 69,
+   "y": 90.5,
+   "font_pt": 6,
+   "weight": "bold",
+   "color": "ink",
+   "text": "(i) Hydrolysis"
+  },
+  {
+   "id": "rx1",
+   "type": "text",
+   "x": 69,
+   "y": 95.5,
+   "w": 72,
+   "font_pt": 6,
+   "text": "R–Si(OR′)₃ + 3 H₂O  →  R–Si(OH)₃ + 3 R′OH"
+  },
+  {
+   "id": "rx2h",
+   "type": "text",
+   "x": 69,
+   "y": 103,
+   "font_pt": 6,
+   "weight": "bold",
+   "color": "ink",
+   "text": "(ii) Condensation with surface silanols"
+  },
+  {
+   "id": "rx2",
+   "type": "text",
+   "x": 69,
+   "y": 108,
+   "w": 72,
+   "font_pt": 6,
+   "text": "R–Si(OH)₃ + HO–Si≡(surface)  →  R–Si(OH)₂–O–Si≡ + H₂O"
+  },
+  {
+   "id": "rx3h",
+   "type": "text",
+   "x": 69,
+   "y": 115.5,
+   "font_pt": 6,
+   "weight": "bold",
+   "color": "ink",
+   "text": "(iii) Lateral cross-linking"
+  },
+  {
+   "id": "rx3",
+   "type": "text",
+   "x": 69,
+   "y": 120.5,
+   "w": 72,
+   "font_pt": 6,
+   "text": "2 R–Si–OH  →  R–Si–O–Si–R + H₂O"
+  },
+  {
+   "id": "rx4h",
+   "type": "text",
+   "x": 69,
+   "y": 128,
+   "font_pt": 6,
+   "weight": "bold",
+   "color": "ink",
+   "text": "(iv) Oxirane ring-opening (GPTMS) by a polymer amine"
+  },
+  {
+   "id": "rx4",
+   "type": "text",
+   "x": 69,
+   "y": 133,
+   "w": 72,
+   "font_pt": 6,
+   "text": "R–CH(–O–)CH₂ + H₂N–P  →  R–CH(OH)–CH₂–NH–P"
+  },
+  {
+   "id": "rxP",
+   "type": "text",
+   "x": 69,
+   "y": 140.5,
+   "w": 72,
+   "font_pt": 5.2,
+   "italic": true,
+   "color": "grey",
+   "text": "R, organofunctional group; R′, methyl or ethyl; P, polymer chain (e.g. chitosan, gelatin)."
+  },
+  {
+   "id": "abbr",
+   "type": "text",
+   "x": 3,
+   "y": 152,
+   "w": 140,
+   "font_pt": 5,
+   "color": "grey",
+   "text": "APTES, (3-aminopropyl)triethoxysilane; GPTMS, (3-glycidyloxypropyl)trimethoxysilane; QAS, quaternary ammonium silane; CNC, cellulose nanocrystals; NP, nanoparticle."
+  }
+ ]
+}

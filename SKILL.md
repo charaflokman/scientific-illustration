@@ -22,22 +22,57 @@ image-generation tools, so protect them in every deliverable:
 Reply in the user's language, whatever it is. Keep figure text in English unless the user asks otherwise, because
 journals expect it; lesson summaries and teaching material follow the user's language.
 
-## Ask style and level first
+## Project intake: ask about the project first, with choices
 
-At the start of a new visual (not an edit), ask one short question with two choices, unless the user already said:
-"Academic or pixel-art style? And a simple version or a detailed one?" Defaults if they don't answer: academic, and
-simple for slides, students and social media, detailed for journals, theses and reviews. Offer the other level as a
-follow-on, since both come from the same spec.
+Clients judge figures as "basic" mostly when the figure was built from too little about the project. Before a new
+visual (not an edit), run a short intake in one message: 5–7 numbered questions, each with lettered choices plus
+"other", so the user can answer like "1b 2c 3a…". Use the harness's multiple-choice tool if it has one. Skip any
+question the user's material already answers, and never ask more than once.
 
-| | **Simple** | **Detailed** |
-|---|---|---|
-| Purpose | one message at a glance (slides, teaching, abstract thumbnail, social) | the full mechanism for experts (paper, thesis, review) |
-| Content | 3–6 elements, one panel, the main idea only | multi-panel (a)(b)(c), insets/zooms, intermediate steps, conditions |
-| Text | 1–3-word labels, no references | labels + short notes, values and units, reference numbers [n] |
-| Art | large icons, few colours, generous white space | full library art, molecular detail, legends, scale bars |
-| Data | none or one key number | every stated value; `[? …]` placeholders for missing ones |
+1. **Where will it be used?** a) journal figure b) graphical abstract c) thesis/review chapter d) talk/poster
+   e) teaching/lesson f) social media/video
+2. **Who reads it?** a) specialists in your exact field b) scientists from other fields c) students d) general public
+3. **Complexity level:** a) simple — one message b) detailed — the full mechanism c) expert/complex — every actor,
+   sub-cellular location, inset zooms, regulatory loops, drugs and references (BioRender "publication" level)
+4. **Style:** a) academic (clean, Servier/Reactome art) b) rich 3D render c) pixel art d) match a figure I'll send
+5. **The one message** the figure must leave (one sentence), and **must-include** elements (genes, materials,
+   conditions, steps, organisms).
+6. **Your project context:** title or aim, your material/model system, your key result or hypothesis, and any of
+   your own data, images or a previous figure to match.
+7. **Format:** size (single 85 mm / double 180 mm / 16:9 / square), colour constraints (journal or lab palette),
+   language of labels, deadline for a first draft.
 
-Build the detailed spec first when both are wanted, then derive the simple one by removing panels and notes (keep
+Then summarise the brief back in 3–4 lines ("Expert-level journal figure, 180 mm, specialists, message: …") and
+start. Defaults if they skip: journal, specialists, detailed, academic, double column.
+
+| | **Simple** | **Detailed** | **Expert / complex** |
+|---|---|---|---|
+| Purpose | one message at a glance | the full mechanism for experts | a review-grade figure that maps the whole system |
+| Content | 3–6 elements, one panel | multi-panel (a)(b)(c), steps, conditions | 25–60 elements across compartments (membrane, cytoplasm, organelles, nucleus), inset zooms with molecular detail, feedback loops, inducers/inhibitors, a summary strip |
+| Text | 1–3-word labels | labels + notes, values, [n] | the same plus enzyme names on every arrow, gene names, a short legend of symbols |
+| Art | large icons, white space | library art, molecular detail | library art for every actor (Reactome proteins, Servier organelles, RDKit molecules), shaded 3D-style membranes, a 3D render as hero when space allows |
+| Data | none or one number | every stated value; `[? …]` gaps | the same, with each node traceable to a numbered source |
+
+**Write figure text like a journal, never like an ad.** Titles state the subject in full technical terms
+("Organofunctional silanes at the filler–polymer interface of …"), not slogans ("One molecule, three jobs"). Notes are
+terse, declarative and use standard nomenclature (oxirane ring-opening, siloxane linkage, steric stabilisation); no
+second person, no exclamation, no marketing words (powerful, amazing, game-changing), no casual phrasing ("nothing has
+to leach out"). Define abbreviations in a footnote line at the bottom, panel letters (a)(b)(c), roman numerals for
+reactions, and "schematic, not to scale" in the subtitle. Point at details with small numbered markers and a keyed
+list instead of long crossing leader lines.
+
+**Chemistry is checked atom by atom.** Molecules come from SMILES (RDKit 2D, or 3D via `render_3d.py` molecule objects
+with `smiles` + `anchor` to graft them on a surface), never drawn freehand. Before delivering, verify: valences (Si is
+tetravalent: one Si–C, three Si–O; no Si=O, no S in silanes), charges and counter-ions, the side of a molecule that faces
+a surface (e.g. QAS: N⁺ near the surface, alkyl chain outward), balanced reactions, and spelling of every label.
+
+**Expert level is never boxes and arrows.** Every protein, organelle, molecule and cell gets real art (search
+`library.py` first: Reactome for named proteins/receptors/transporters, Servier for organelles and cells, RDKit for
+small molecules); boxes are only for short notes. Lay the figure out in biological space (outside → membrane →
+cytoplasm → organelles → nucleus) instead of a flowchart grid, and add at least one inset that zooms into the key
+molecular event.
+
+Build the most detailed spec first when several levels are wanted, then derive the simpler ones by removing panels and notes (keep
 ids and colours so the two look like a family). For lesson summaries: simple = key ideas + one equation + takeaway;
 detailed = all cards (equations, steps, table, concept map, mistakes, sources). For video: simple ≈ 20 s, 5 scenes;
 detailed ≈ 45–60 s with comparison, numbers and zooms.

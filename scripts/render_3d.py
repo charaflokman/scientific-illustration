@@ -74,7 +74,7 @@ const mat = (c, o = 1) => new THREE.MeshPhysicalMaterial(Object.assign({color:c,
   transparent:o < 1, opacity:o, depthWrite:o >= 1, side: o < 1 ? THREE.DoubleSide : THREE.FrontSide},
   FIN.metal ? {metalness:1, roughness:0.18, clearcoat:0} : {}, FIN.glass ? {transmission:0.85, thickness:0.6, roughness:0.15, ior:1.35, transparent:false, opacity:1, depthWrite:true} : {},
   FIN.matte ? {roughness:0.85, clearcoat:0} : {}));
-const CPK = {H:'#ffffff', C:'#404040', N:'#3050f8', O:'#ff2010', S:'#ffd030', P:'#ff8000', Si:'#f0c8a0', Cl:'#1ff01f', Na:'#ab5cf2', Ca:'#3dff00'};
+const CPK = {H:'#f2f2f2', C:'#4a4a4a', N:'#3050f8', O:'#e8331f', S:'#ffd030', P:'#ff8000', Si:'#d9a066', Cl:'#1ff01f', Na:'#ab5cf2', Ca:'#3dff00', Ag:'#c0c0c0'};
 const groups = {}, labels = [];
 const inRegion = (r, R) => [0,1,2].map(i => r[i] ? r[i][0] + R() * (r[i][1] - r[i][0]) : 0);
 function shadow(m){ m.traverse(o => { if (o.isMesh) { o.castShadow = true; o.receiveShadow = true; } }); return m; }
@@ -123,10 +123,26 @@ for (const o of SPEC.objects) {
   }
   if (o.type === 'molecule') {
     const sc = o.scale || 1, at = o.atoms.map(a => new THREE.Vector3(a[1], a[2], a[3]).multiplyScalar(sc));
-    o.atoms.forEach((a, i) => { const m = new THREE.Mesh(new THREE.SphereGeometry((a[0] === 'H' ? .22 : .35) * sc, 32, 20), mat(CPK[a[0]] || '#ff66cc')); m.position.copy(at[i]); g.add(m); });
-    for (const [i, j] of o.bonds || []) { const a = at[i], b = at[j], len = a.distanceTo(b);
-      const m = new THREE.Mesh(new THREE.CylinderGeometry(.09*sc, .09*sc, len, 16), mat('#b8b8b8'));
-      m.position.copy(a).add(b).multiplyScalar(.5); m.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0), b.clone().sub(a).normalize()); g.add(m); }
+    const RAD = {H: .2, C: .32, N: .31, O: .3, S: .4, Si: .42, Cl: .38, P: .38, Ag: .5};
+    o.atoms.forEach((a, i) => { const m = new THREE.Mesh(new THREE.SphereGeometry((RAD[a[0]] || .35) * sc, 32, 20), mat(CPK[a[0]] || '#ff66cc')); m.position.copy(at[i]); g.add(m); });
+    for (const [i, j, ord] of o.bonds || []) { const a = at[i], b = at[j], len = a.distanceTo(b), dir = b.clone().sub(a).normalize();
+      const n = Math.round(ord || 1), side = new THREE.Vector3(0,0,1).cross(dir).normalize().multiplyScalar(.09*sc);
+      for (let k = 0; k < n; k++) {  // double/triple bonds as parallel sticks
+        const m = new THREE.Mesh(new THREE.CylinderGeometry((n > 1 ? .05 : .08)*sc, (n > 1 ? .05 : .08)*sc, len, 16), mat('#c4c4c4'));
+        m.position.copy(a).add(b).multiplyScalar(.5).addScaledVector(side, (k - (n - 1) / 2) * 1.6);
+        m.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0), dir); g.add(m); } }
+  }
+  if (o.type === 'capsule') {  // rod-shaped bacterium or any pill shape; rot in radians
+    const m = new THREE.Mesh(new THREE.CapsuleGeometry(o.radius || .4, o.length || 1.6, 12, 32), mat(c)); g.add(m);
+  }
+  if (o.type === 'corona') {  // nanoparticle with a shell of radial ligands (capping agent / steric stabiliser)
+    const R0 = o.radius || 1, L = o.length || .6, n = o.count || 120, Rr = rnd(o.seed || 3);
+    const core = new THREE.Mesh(new THREE.SphereGeometry(R0, 64, 48), mat(c)); g.add(core);
+    const stem = mat(o.stemColor || '#2E8B6E'), head = mat(o.headColor || '#0072B2');
+    for (let i = 0; i < n; i++) { const u = Rr()*2-1, ph = Rr()*6.283, s = Math.sqrt(1-u*u), d = new THREE.Vector3(s*Math.cos(ph), u, s*Math.sin(ph));
+      const st = new THREE.Mesh(new THREE.CylinderGeometry(.025, .025, L, 8), stem); st.position.copy(d).multiplyScalar(R0 + L/2);
+      st.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0), d); g.add(st);
+      const hd = new THREE.Mesh(new THREE.SphereGeometry(.07, 16, 12), head); hd.position.copy(d).multiplyScalar(R0 + L); g.add(hd); }
   }
   if (o.type === 'arrow') {
     const a = new THREE.Vector3(...o.from), b = new THREE.Vector3(...o.to), dir = b.clone().sub(a), L = dir.length(); dir.normalize();
@@ -198,6 +214,58 @@ window.__ready = true;
 </script></body></html>"""
 
 
+def embed_smiles(o):
+    """Molecule objects may give "smiles" instead of atoms: RDKit builds a force-field-optimised 3D geometry, so bond
+    lengths and angles are chemically right. "hydrogens": false hides H; "bond_orders" draws double/triple bonds."""
+    from rdkit import Chem
+    from rdkit.Chem import AllChem
+    m = Chem.AddHs(Chem.MolFromSmiles(o["smiles"]))
+    AllChem.EmbedMolecule(m, randomSeed=o.get("seed", 7))
+    try:
+        AllChem.MMFFOptimizeMolecule(m)
+    except Exception:
+        AllChem.UFFOptimizeMolecule(m)
+    if o.get("extended", True):  # all-anti chains: no gauche kinks that read as fake rings in a 2D view
+        from rdkit.Chem import rdMolTransforms as T
+        conf0 = m.GetConformer()
+        for bd in m.GetBonds():
+            i, j = bd.GetBeginAtom(), bd.GetEndAtom()
+            if bd.IsInRing() or bd.GetBondTypeAsDouble() != 1 or i.GetDegree() < 2 or j.GetDegree() < 2:
+                continue
+            a0 = next((n.GetIdx() for n in i.GetNeighbors() if n.GetIdx() != j.GetIdx() and n.GetSymbol() != "H"), None)
+            d0 = next((n.GetIdx() for n in j.GetNeighbors() if n.GetIdx() != i.GetIdx() and n.GetSymbol() != "H"), None)
+            if a0 is not None and d0 is not None:
+                try:
+                    T.SetDihedralDeg(conf0, a0, i.GetIdx(), j.GetIdx(), d0, 180.0)
+                except Exception:
+                    pass
+    keep = [a.GetIdx() for a in m.GetAtoms() if o.get("hydrogens", True) or a.GetSymbol() != "H"]
+    idx = {k: i for i, k in enumerate(keep)}
+    conf = m.GetConformer()
+    c = [sum(conf.GetAtomPosition(k)[d] for k in keep) / len(keep) for d in range(3)]
+    P = {k: [conf.GetAtomPosition(k)[d] for d in range(3)] for k in keep}
+    if "anchor" in o:  # stand the molecule up: anchor atom (SMILES order) at the origin, body pointing +y
+        import numpy as np
+        ax = np.array(P[o["anchor"]])
+        X = np.array([P[k] for k in keep]) - ax
+        v = X.mean(0)
+        v /= np.linalg.norm(v) or 1
+        y = np.array([0.0, 1.0, 0.0])
+        w = np.cross(v, y)
+        s, cth = np.linalg.norm(w), float(v @ y)
+        if s < 1e-8:
+            R = np.eye(3) if cth > 0 else np.diag([1.0, -1.0, -1.0])
+        else:
+            K = np.array([[0, -w[2], w[1]], [w[2], 0, -w[0]], [-w[1], w[0], 0]]) / s
+            R = np.eye(3) + s * K + (1 - cth) * K @ K
+        X = X @ R.T
+        P = {k: list(X[i]) for i, k in enumerate(keep)}
+        c = [0.0, 0.0, 0.0]
+    o["atoms"] = [[m.GetAtomWithIdx(k).GetSymbol()] + [round(P[k][d] - c[d], 3) for d in range(3)] for k in keep]
+    o["bonds"] = [[idx[b.GetBeginAtomIdx()], idx[b.GetEndAtomIdx()], int(b.GetBondTypeAsDouble())] for b in m.GetBonds()
+                  if b.GetBeginAtomIdx() in idx and b.GetEndAtomIdx() in idx]
+
+
 def main():
     if hasattr(sys.stdout, "reconfigure"):
         sys.stdout.reconfigure(encoding="utf-8", errors="replace")
@@ -208,6 +276,9 @@ def main():
     a = ap.parse_args()
     spec = json.loads(Path(a.spec).read_text(encoding="utf-8"))
     spec.setdefault("name", Path(a.spec).stem)
+    for o in spec["objects"]:
+        if o.get("type") == "molecule" and o.get("smiles") and not o.get("atoms"):
+            embed_smiles(o)
     out = Path(a.out or Path(a.spec).with_suffix(".html"))
     out.parent.mkdir(parents=True, exist_ok=True)
     payload = json.dumps(spec, ensure_ascii=False).replace("</", "<\\/")

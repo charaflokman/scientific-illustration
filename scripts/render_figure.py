@@ -362,7 +362,8 @@ class Renderer:
         if el.get("text"):
             body += self.label(el["id"] + ".label", el["text"], x + w / 2, y + h / 2,
                                size=el.get("font_pt"), width=w - 2, valign="middle",
-                               weight=el.get("weight", "normal"))
+                               weight=el.get("weight", "normal"),
+                               **({"color": color_of(self.colors, el["text_color"], "#222222")} if el.get("text_color") else {}))
         return f'<g id="{esc(el["id"])}" class="rv-el" data-type="box" data-box="{x} {y} {w} {h}"{tr}>{body}</g>'
 
     def _icon_label(self, el, x, y, w, h):
@@ -433,6 +434,45 @@ class Renderer:
         return (f'<g id="{esc(el["id"])}" class="rv-el" data-type="image" data-box="{x} {y} {w} {h}"{tr}>'
                 f'<image x="{x:.2f}" y="{y:.2f}" width="{w:.2f}" height="{h:.2f}" preserveAspectRatio="xMidYMid meet" '
                 f'href="data:{mime};base64,{data}"/>{self._icon_label(el, x, y, w, h)}</g>')
+
+    def r_inset(self, el, o):
+        """Circular zoom-in: an image (often a 3D close-up render) clipped to a circle, with a ring, a title above and
+        a dashed leader to the spot it magnifies. Keys: cx cy r path, title, color, to [x, y], zoom (image scale)."""
+        cx, cy, r = float(el["cx"]), float(el["cy"]), float(el["r"])
+        tr, _, _ = self.tx(o)
+        col = color_of(self.colors, el.get("color"), "#2B7BB0")
+        cid = "clip_" + re.sub(r"[^\w-]", "_", el["id"])
+        p = Path(el["path"])
+        if not p.is_absolute():
+            p = self.base / p
+        mime = {"jpg": "image/jpeg", "jpeg": "image/jpeg", "webp": "image/webp", "svg": "image/svg+xml"}.get(
+            p.suffix.lower().lstrip("."), "image/png")
+        data = base64.b64encode(p.read_bytes()).decode()
+        z = float(el.get("zoom", 1.0))
+        s = 2 * r * z
+        ox, oy = el.get("offset", [0, 0])
+        if el.get("license"):
+            self.credits.append({"id": el["id"], "file": p.name, "license": el["license"], "author": el.get("author", ""),
+                                 "source": el.get("source", "")})
+        parts = [f'<defs><clipPath id="{cid}"><circle cx="{cx:.2f}" cy="{cy:.2f}" r="{r:.2f}"/></clipPath></defs>']
+        if el.get("to"):   # leader from the ring edge to the magnified spot
+            tx, ty = el["to"]
+            d = math.hypot(tx - cx, ty - cy) or 1
+            sx, sy = cx + (tx - cx) / d * r, cy + (ty - cy) / d * r
+            parts.append(f'<line x1="{sx:.2f}" y1="{sy:.2f}" x2="{tx:.2f}" y2="{ty:.2f}" stroke="{col}" '
+                         f'stroke-width="{self.stroke_mm:.2f}" stroke-dasharray="1.2 0.9"/>'
+                         f'<circle cx="{tx:.2f}" cy="{ty:.2f}" r="0.7" fill="{col}"/>')
+        parts.append(f'<circle cx="{cx:.2f}" cy="{cy:.2f}" r="{r:.2f}" fill="{color_of(self.colors, el.get("fill"), "#FFFFFF")}"/>'
+                     f'<image x="{cx - s / 2 + ox:.2f}" y="{cy - s / 2 + oy:.2f}" width="{s:.2f}" height="{s:.2f}" '
+                     f'preserveAspectRatio="xMidYMid slice" clip-path="url(#{cid})" href="data:{mime};base64,{data}"/>'
+                     f'<circle cx="{cx:.2f}" cy="{cy:.2f}" r="{r:.2f}" fill="none" stroke="{col}" stroke-width="{self.stroke_mm * 3:.2f}"/>')
+        if el.get("title"):
+            fpt = float(el.get("font_pt", self.fpt))
+            for i, line in enumerate(str(el["title"]).split("\n")):
+                parts.append(f'<text x="{cx:.2f}" y="{cy - r - 1.6 - (len(str(el["title"]).split(chr(10))) - 1 - i) * fpt * .42:.2f}" '
+                             f'text-anchor="middle" font-size="{fpt * PT:.2f}" font-weight="bold" fill="{col}">{esc(line)}</text>')
+        return (f'<g id="{esc(el["id"])}" class="rv-el" data-type="inset" data-box="{cx - r} {cy - r} {2 * r} {2 * r}"{tr}>'
+                + "".join(parts) + "</g>")
 
     def r_molecule(self, el, o):
         x, y, w = float(el["x"]), float(el["y"]), float(el["w"])

@@ -32,7 +32,7 @@ Common keys: `id` (stable, short, meaningful: `dissolve`, `filmA`), `x`, `y`, `w
 | type | keys | notes |
 |---|---|---|
 | `panel` | x y w h, `letter` "(a)", `title`, `fill`, `stroke`, `title_bar` (colour), `dashed`, `radius` | draw panels first (they sit underneath) |
-| `box` | x y w h, `text`, `fill`/`color`, `stroke`, `dashed`, `weight` | process boxes, callouts |
+| `box` | x y w h, `text`, `fill`/`color`, `stroke`, `dashed`, `weight`, `text_color`, `radius` | process boxes, callouts |
 | `icon` | x y w [h], `icon`, `color`, `accent`, `params`, `label`, `label_pos` below/above/left/right/none, `label_width`, `seed`, `flip` | built-in line art (section 3); non-stretch icons keep 1:1 and centre in the box. Hide a label with `"label_pos": "none"` (never `"label": "none"`) |
 | `svgfile` | x y w [h], `path`, `license`, `author`, `source`, `label` | external SVG (e.g. from `bioicons.py get`); scripts are stripped; CC-BY credits are added to the figure |
 | `molecule` | x y w [h], `smiles`, `label` | RDKit 2D structure (falls back to a generic icon with a warning) |
@@ -42,6 +42,7 @@ Common keys: `id` (stable, short, meaningful: `dissolve`, `filmA`), `x`, `y`, `w
 | `arrow` | `from`, `to` (element ids or `[x, y]`), `label`, `label_side` above/below, `label_width`, `style` solid/dashed, `curve` (−0.5…0.5), `route` straight/elbow, `both`, `color`, `width_mm`, `gap` | endpoints clip to the element boxes, so arrows follow when elements move |
 | `flow` | x y w h, `steps` [{id, icon, label, color, accent, params}], `arrows` [labels], `icon_size`, `icon_top` | expands into evenly spaced icons + labelled arrows; ids `flow.s0`…, `flow.a0`… unless steps give ids |
 | `legend` | x y, `items` [{color, label, shape dot/square/line}], `direction` vertical/horizontal | |
+| `inset` | `cx` `cy` `r`, `path` (image, usually a 3D close-up), `title`, `color`, `zoom`, `offset` [dx,dy], `to` [x,y] (optional dashed leader), `font_pt` | circular zoom-in with ring and title |
 | `bracket` | x1 y1 x2 y2, `label`, `color` | groups a span of steps |
 
 Draw order = list order. Arrows may reference elements defined later.
