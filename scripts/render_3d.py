@@ -267,6 +267,59 @@ def embed_smiles(o):
                   if b.GetBeginAtomIdx() in idx and b.GetEndAtomIdx() in idx]
 
 
+CLUSTER = r"""
+import json, sys
+from ase.cluster import Icosahedron, Decahedron, Octahedron
+el, shape, n = sys.argv[1], sys.argv[2], int(sys.argv[3])
+a = {"icosahedron": lambda: Icosahedron(el, noshells=n),
+     "decahedron": lambda: Decahedron(el, p=n, q=1, r=0),
+     "octahedron": lambda: Octahedron(el, length=2 * n + 1, cutoff=n),   # truncated octahedron
+     "cuboctahedron": lambda: Octahedron(el, length=2 * n + 1, cutoff=n + 1)}[shape]()
+a.center(about=(0, 0, 0))
+print(json.dumps({"atoms": [[s, *map(float, p)] for s, p in zip(a.get_chemical_symbols(), a.positions)]}))
+"""
+
+
+def embed_cluster(o):
+    """corona/nanoparticle with "core": "icosahedron" | "decahedron" | "octahedron" | "cuboctahedron": ASE builds the
+    real metal lattice (fcc, multiply twinned or truncated) atom by atom; it is scaled so its outer radius = "radius"."""
+    import subprocess
+    venv = Path.home() / ".cache" / "scientific-illustration" / "venvs" / "atomistic"
+    py = venv / ("Scripts/python.exe" if os.name == "nt" else "bin/python")
+    if not py.exists():
+        print(f"ASE venv missing ({venv}); {o.get('id')} keeps a smooth core. See setup_check.py")
+        return
+    r = subprocess.run([str(py), "-I", "-c", CLUSTER, o.get("element", "Ag"), o["core"], str(o.get("shells", 4))],
+                       capture_output=True, text=True, check=True)
+    atoms = json.loads(r.stdout)["atoms"]
+    rmax = max((x * x + y * y + z * z) ** .5 for _, x, y, z in atoms) or 1
+    metallic = {"Ag": 1.445, "Au": 1.442, "Pt": 1.387, "Cu": 1.278, "Pd": 1.376}.get(o.get("element", "Ag"), 1.4)  # Å
+    k = o.get("radius", 1) / (rmax + metallic)       # outer atom surfaces touch the requested radius
+    o["clusterAtoms"] = [[s, round(x * k, 4), round(y * k, 4), round(z * k, 4)] for s, x, y, z in atoms]
+    o["clusterAtomRadius"] = round(metallic * k, 4)
+
+
+def photo_finish(png, spec):
+    """What a macro lens adds and a renderer does not: bloom around highlights, fine sensor grain, a faint vignette.
+    Alpha is kept, so transparent renders still composite. "photo": false skips it; "grain", "bloom", "vignette" tune."""
+    import numpy as np
+    from PIL import Image, ImageFilter
+    im = Image.open(png).convert("RGBA")
+    a = np.asarray(im).astype(np.float32) / 255
+    rgb, al = a[..., :3], a[..., 3:]
+    h, w = al.shape[:2]
+    hi = np.clip((rgb.max(-1, keepdims=True) - .82) / .18, 0, 1) * rgb * al
+    glow = np.asarray(Image.fromarray((hi * 255).astype(np.uint8)).filter(ImageFilter.GaussianBlur(w / 160))) / 255
+    rgb = rgb + glow * spec.get("bloom", .35) * (1 - rgb)
+    yy, xx = np.mgrid[0:h, 0:w]
+    r = np.hypot((xx - w / 2) / (w / 2), (yy - h / 2) / (h / 2))[..., None]
+    rgb = rgb * (1 - spec.get("vignette", .1) * np.clip(r - .45, 0, 1) ** 2)
+    rng = np.random.default_rng(7)
+    rgb = rgb + rng.normal(0, spec.get("grain", .012), (h, w, 1)) * al
+    out = np.concatenate([np.clip(rgb, 0, 1), al], -1)
+    Image.fromarray((out * 255 + .5).astype(np.uint8), "RGBA").save(png)
+
+
 def main():
     if hasattr(sys.stdout, "reconfigure"):
         sys.stdout.reconfigure(encoding="utf-8", errors="replace")
@@ -282,6 +335,9 @@ def main():
     for o in spec["objects"]:
         if o.get("type") == "molecule" and o.get("smiles") and not o.get("atoms"):
             embed_smiles(o)
+        if o.get("type") == "corona" and o.get("core") in ("icosahedron", "decahedron", "octahedron", "cuboctahedron") \
+                and not o.get("clusterAtoms"):
+            embed_cluster(o)
     out = Path(a.out or Path(a.spec).with_suffix(".html"))
     out.parent.mkdir(parents=True, exist_ok=True)
     payload = json.dumps(spec, ensure_ascii=False).replace("</", "<\\/")
@@ -307,6 +363,8 @@ def main():
         line = [l for l in r.stdout.splitlines() if l.startswith("BLENDER_PNG")]
         if not line:
             sys.exit("Blender render failed: " + (r.stderr or r.stdout)[-2500:])
+        if spec.get("photo", True):
+            photo_finish(png, spec)
         print("Photoreal PNG:", png, "(" + line[0].split()[-1] + ")")
     if a.png:
         w, h = (int(v) for v in a.png.lower().split("x"))

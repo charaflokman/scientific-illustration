@@ -22,6 +22,30 @@ image-generation tools, so protect them in every deliverable:
 Reply in the user's language, whatever it is. Keep figure text in English unless the user asks otherwise, because
 journals expect it; lesson summaries and teaching material follow the user's language.
 
+## First use: check the tools
+
+The first time the skill is used on a machine (and again every 30 days), run
+`python scripts/setup_check.py --first-run` before anything else. It lists what is installed (Python packages,
+browser, Blender and GPU, Molecular Nodes, studio HDRIs, art libraries, TPMS venvs, Remotion, node) and writes
+`~/.cache/scientific-illustration/setup_report.txt`; within 30 days it just prints that report. Tell the user in 3–5
+lines what is ready and what is missing for the output they want, and offer to install the missing pieces (each
+line gives the command). Install nothing without the user's yes; audit downloaded tools first and keep Python tools
+in their own venvs under `~/.cache/scientific-illustration/venvs/`.
+
+## Learn the client (every job, every piece of feedback)
+
+The skill works for clients who come back with new requests at any time; each request must start from what they
+already taught us. Before a new visual, read `references/style-profile.md` (house style learned from all clients)
+and, if it exists, `client_profile.md` in the client's project folder. After every piece of client feedback
+("looks like glass", "too simple", "I like this one", a reference image they prefer), do three things in the same
+turn: (1) write the feedback, the image it refers to, and the rule that follows into `client_profile.md`
+(create it if missing: client, field, preferred look, rejected looks with reasons, accepted outputs, reference
+images and what in them is wrong); (2) if the lesson is general, add it to `references/style-profile.md`;
+(3) apply it to the current work. When the client sends a reference image, analyse it in writing before
+changing anything: composition, palette, materials, scale of contents, light, insets, text, and every scientific
+error in it, then say which parts you will match and which you will not copy. Keep accepted outputs unchanged
+(pin their specs) unless the client asks.
+
 ## Project intake: ask about the project first, with choices
 
 Clients judge figures as "basic" mostly when the figure was built from too little about the project. Before a new
@@ -88,6 +112,17 @@ wrong thing, then render again. For video, render each pixel scene and sequence 
 Pixel art is for engagement and teaching; tell the user it is not suitable for journal figures.
 
 ## Research the topic before drawing
+
+**Every request starts with an internet search, and the user sees the references.** Before the first draft of any new
+visual (figure, 3D render, summary, video, simulation) search the web for everything the request touches: the
+science (mechanism, structures, accepted nomenclature, typical values), how experts draw it (published figures and
+graphical abstracts on the topic, the real shape and scale of each object, e.g. Ag NP habit, bacterial pili), and
+the tools or open art that could make it better. Use the harness's web search and `scripts/research.py`. Then show
+the user, before or with the draft, a short numbered reference list (title, source, year, link) and one line per
+reference on what it was used for. Every element, label and number in the visual must trace to the user's material
+or to one of these references; put the numbers in `provenance` and, at detailed level, on the labels. Skip a fresh
+search only for small edits to a visual whose references were already shown. Never present a reference you did not
+open, and never cite from memory alone.
 
 When the user gives only a topic or a thin description ("a figure on ferroptosis", "explain PLA degradation"), do not
 draw from memory. Research first, then draw, so every element and label is backed by a source:
@@ -157,6 +192,34 @@ Example: `assets/examples/dispersion_wound_dressing_v2.json`.
 (types slab, scaffold, fibers, brush, spheres with finish metal/glass/matte), export a transparent PNG with
 `--png 2400x1700`, then place it as an `image` element in a `render_figure.py` spec and put all text, arrows and
 RDKit chemistry on top as editable vector. Example: `assets/examples/silane_roles.json` + `hero_dressing.json`.
+
+**Photoreal 3D (what clients now expect): `render_3d.py scene.json --blender 2400x1700 --samples 160`.** Plain
+primitives read as "old and undeveloped", so `render_blender.py` gives every object structural and surface detail:
+`scaffold` `style` foam (pores inside pores, cut faces as a cross-section) / gyroid (TPMS) / nonwoven (layered fibres
+of varied diameter); slabs are bevelled and, when translucent, a milky gel whose embedded fibres and particles stay
+visible (`milk`); `corona` = faceted multiply-twinned Ag core, curved ligands of varied length with heads, a faint
+steric-layer haze, optional `cutaway` (degrees) to open the shell towards the camera; `capsule` = bacterium with a
+wrinkled translucent envelope, `pili`, `flagella`; `crystals` only when the material really is crystalline; molecules
+from SMILES with split-colour bonds. Lighting is a Poly Haven studio HDRI (`hdri`, CC0) plus soft key/fill/rim and
+reflection softboxes; `blur` and `focus` set depth of field; `background: null` gives a transparent PNG for insets;
+`shadow: false` for floating objects. Compose like a magazine render: one large hero object in focus, neighbours
+behind it out of focus, nothing decorative that is not in the science (no stray rods or crystals "for looks").
+Molecular Nodes (Blender add-on, installed per machine) is the route for proteins and PDB/AlphaFold structures.
+
+**Specialised scientific 3D tools** (each in its own venv under `~/.cache/scientific-illustration/venvs/`, or as a
+Blender extension; `setup_check.py` lists what is present). Pick by subject, and let the real structure supply the detail:
+
+| Subject | Tool | Use |
+|---|---|---|
+| Metal NPs, clusters, crystal surfaces | ASE (`venvs/atomistic`) | `corona` with `"core": "icosahedron"/"decahedron"/"octahedron"/"cuboctahedron"`, `"shells": n`, `"element": "Ag"`: the NP is built atom by atom on its real lattice and scaled to `radius` |
+| Atomistic snapshots, MD frames | OVITO (`venvs/atomistic`), v_ase (`venvs/vase`, exports to Blender) | render or convert particle data before composing |
+| Proteins, receptors, enzymes | Molecular Nodes (Blender), PyMOL open-source (`venvs/pymol`) | cartoon / surface styles from a PDB or AlphaFold id |
+| Nanoparticles and crystals inside Blender | Atomic Blender cluster + PDB/XYZ (Blender extensions) | import .xyz/.pdb written by ASE, VESTA or the user |
+| Crowded cell interiors (mesoscale) | cellPACK (`venvs/cellpack`, Python 3.9) | pack proteins and organelles into compartments from a recipe |
+| TPMS scaffolds for exact geometry | PyScaffolder (`venvs/scaffold`), microgen (`venvs/microgen`) | export a mesh when the scaffold geometry itself is the data |
+
+A capability sheet with one render per object type is built by `scripts/gallery.py --out <folder>`; show
+it to new users so they can choose a look.
 
 Research before drawing when the user gives only a topic or a URL: use the `agent-reach` skill/CLI
 (`agent-reach doctor` lists channels; web pages via Jina Reader, GitHub, YouTube subtitles, RSS). Use only

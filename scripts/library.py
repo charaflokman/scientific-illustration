@@ -260,9 +260,28 @@ def fetch_phylopic():
     _save_catalog("phylopic", items, job)
 
 
+HDRIS = ["studio_small_09", "photo_studio_loft_hall", "brown_photostudio_02"]
+
+
+def fetch_hdri():
+    """Photo-studio HDRIs from Poly Haven (CC0, no attribution needed) for render_blender.py reflections and light."""
+    for a in HDRIS:
+        p = CACHE / "hdri" / f"{a}.hdr"
+        if p.exists():
+            continue
+        url = json.loads(_get(f"https://api.polyhaven.com/files/{a}"))["hdri"]["2k"]["hdr"]["url"]
+        if not url.startswith("https://dl.polyhaven.org/"):
+            print("  skip", a, "unexpected host", url)
+            continue
+        p.write_bytes(urllib.request.urlopen(urllib.request.Request(url, headers={"User-Agent": "scientific-illustration"}),
+                                             timeout=300).read())
+        print("  HDRI", a)
+
+
 def fetch(only=None):
-    want = set(only or ["togotv", "bioicons", "health", "reactome", "scidraw", "phylopic"])
-    for lib, fn in (("reactome", fetch_reactome), ("scidraw", fetch_scidraw), ("phylopic", fetch_phylopic)):
+    want = set(only or ["togotv", "bioicons", "health", "reactome", "scidraw", "phylopic", "hdri"])
+    for lib, fn in (("reactome", fetch_reactome), ("scidraw", fetch_scidraw), ("phylopic", fetch_phylopic),
+                    ("hdri", fetch_hdri)):
         if lib in want:
             (CACHE / lib).mkdir(parents=True, exist_ok=True)
             fn()
@@ -317,7 +336,7 @@ def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     sub = ap.add_subparsers(dest="cmd", required=True)
     f = sub.add_parser("fetch")
-    f.add_argument("--only", nargs="+", choices=["togotv", "bioicons", "health", "reactome", "scidraw", "phylopic"])
+    f.add_argument("--only", nargs="+", choices=["togotv", "bioicons", "health", "reactome", "scidraw", "phylopic", "hdri"])
     s = sub.add_parser("search")
     s.add_argument("terms", nargs="+")
     s.add_argument("--lib", choices=list(SOURCES))

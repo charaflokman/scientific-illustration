@@ -35,7 +35,96 @@ def find_browser():
     return None
 
 
+CACHE = Path.home() / ".cache" / "scientific-illustration"
+REPORT = CACHE / "setup_report.txt"
+
+
+def find_blender():
+    exe = os.environ.get("BLENDER") or shutil.which("blender")
+    if exe:
+        return exe
+    root = Path(os.environ.get("ProgramFiles", "C:/Program Files"), "Blender Foundation")
+    found = sorted(root.glob("Blender*/blender.exe"))
+    if found:
+        return str(found[-1])
+    mac = Path("/Applications/Blender.app/Contents/MacOS/Blender")
+    return str(mac) if mac.exists() else None
+
+
+def blender_extension(name):
+    """Installed Blender extensions live in the user config folder, one subfolder per id."""
+    bases = [Path(os.environ.get("APPDATA", ""), "Blender Foundation", "Blender"),
+             Path.home() / "Library" / "Application Support" / "Blender", Path.home() / ".config" / "blender"]
+    for b in bases:
+        for p in sorted(b.glob(f"*/extensions/*/{name}")):
+            return p
+    return None
+
+
+def heavy_tools():
+    """3D, render and art-library tools; each line says what it adds and how to get it."""
+    out = []
+    b = find_blender()
+    out.append((bool(b), "blender", b or "missing (photoreal renders via render_3d.py --blender). Install: blender.org, or set BLENDER"))
+    gpu = shutil.which("nvidia-smi")
+    out.append((bool(gpu), "nvidia gpu", "found (Cycles uses OptiX/CUDA)" if gpu else "not found: Cycles renders on CPU (slower, same result)"))
+    mn = blender_extension("molecularnodes")
+    out.append((bool(mn), "molecular nodes", str(mn) if mn else
+                "missing (Blender add-on, GPL-3.0: proteins/PDB structures). Get the build matching your Blender from "
+                "github.com/BradyAJohnston/MolecularNodes/releases, then: blender -b --command extension install-file -r user_default -e <zip>"))
+    hdr = sorted((CACHE / "hdri").glob("*.hdr"))
+    out.append((bool(hdr), "studio hdri", f"{len(hdr)} files (Poly Haven, CC0)" if hdr else "missing: python library.py fetch --only hdri"))
+    for lib in ("servier", "togotv", "reactome", "phylopic", "scidraw", "repos/bioicons", "repos/healthicons"):
+        ok = (CACHE / lib).exists() and any((CACHE / lib).iterdir())
+        out.append((ok, lib.split("/")[-1], "cached" if ok else f"missing: python library.py fetch --only {lib.split('/')[-1].replace('healthicons', 'health')}"))
+    for ext, what in (("atomic_blender_cluster", "nanoparticles/clusters"), ("atomic_blender_pdb_xyz", "PDB/XYZ import"),
+                      ("blentom", "ASE structures, orbitals")):
+        p = blender_extension(ext)
+        out.append((bool(p), ext, str(p) if p else f"missing (Blender add-on, {what}): extensions.blender.org or the project's GitHub"))
+    for venv, mod, lic in (("scaffold", "PyScaffolder", "MIT, TPMS scaffolds"), ("microgen", "microgen", "GPL-3.0, TPMS meshes"),
+                           ("atomistic", "ase", "LGPL, metal NP lattices for render_3d.py"), ("atomistic", "ovito", "MIT, atomistic rendering"),
+                           ("pymol", "pymol", "open-source PyMOL, proteins"), ("vase", "v_ase", "AGPL, ASE viewer + Blender export"),
+                           ("cellpack", "cellpack", "MIT, mesoscale cell packing; Python 3.9")):
+        py = CACHE / "venvs" / venv / ("Scripts/python.exe" if os.name == "nt" else "bin/python")
+        site = list((CACHE / "venvs" / venv).glob("**/site-packages"))
+        ok = py.exists() and any(p.name.lower().startswith(mod.lower()) for s in site for p in s.iterdir())
+        out.append((ok, mod.lower(), f"venv {py.parent.parent} ({lic})" if py.exists() else
+                    f"missing (optional): python -m venv {CACHE / 'venvs' / venv} && <venv python> -m pip install {mod}"))
+    rem = (CACHE / "remotion" / "node_modules").exists()
+    out.append((rem, "remotion", "ready (render_video.py)" if rem else "missing: render_video.py installs it on first use (needs node)"))
+    node = shutil.which("node")
+    out.append((bool(node), "node", node or "missing (video and 3D page export). Install: nodejs.org"))
+    return out
+
+
 def main():
+    if "--first-run" in sys.argv and REPORT.exists():
+        import time
+        age = (time.time() - REPORT.stat().st_mtime) / 86400
+        if age < 30:
+            print(f"Tools checked {age:.0f} days ago (report: {REPORT}). Run without --first-run to check again.")
+            print(REPORT.read_text(encoding="utf-8"))
+            return
+    lines = []
+    real_print = print
+
+    def say(*a):
+        line = " ".join(str(x) for x in a)
+        lines.append(line)
+        real_print(line)
+    globals()["print"] = say
+    try:
+        core()
+        print("3D, rendering and art libraries:")
+        for ok, name, note in heavy_tools():
+            print(f"  {'OK ' if ok else '-- '}  {name:15s} {note}")
+    finally:
+        globals()["print"] = real_print
+    CACHE.mkdir(parents=True, exist_ok=True)
+    REPORT.write_text("\n".join(lines), encoding="utf-8")
+
+
+def core():
     print(f"Python {sys.version.split()[0]} at {sys.executable}")
     for mod, why, how in PY_MODULES:
         try:
