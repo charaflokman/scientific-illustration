@@ -17,16 +17,16 @@ TILES = [
      [{"type": "scaffold", "style": "foam", "size": [5, 2, 4], "pore": 0.7, "color": "#F4F6F9", "seed": 3}]),
     ("gyroid", "TPMS gyroid scaffold", "style gyroid: triply periodic minimal surface with micropores",
      [{"type": "scaffold", "style": "gyroid", "size": [5, 2, 4], "pore": 1.1, "color": "#E9D8C4", "seed": 4}]),
-    ("nonwoven", "Nonwoven fibre mat", "style nonwoven: layered fibres of varied diameter",
-     [{"type": "scaffold", "style": "nonwoven", "size": [5, 0.6, 4], "count": 220, "radius": 0.04, "color": "#B9D9EE",
+    ("nonwoven", "Electrospun fibre mat", "style nonwoven: SEM-like web of fine meandering fibres, cut edges",
+     [{"type": "scaffold", "style": "nonwoven", "size": [5, 0.5, 4], "count": 900, "radius": 0.014, "color": "#DCEAF6",
        "seed": 2}]),
     ("struts", "Strut lattice (old style)", "style struts: the former cylinder lattice, for comparison",
      [{"type": "scaffold", "style": "struts", "size": [5, 1, 4], "cells": [8, 2, 6], "radius": 0.05, "color": "#EDEAE4",
        "seed": 2}]),
-    ("hydrogel", "Hydrogel composite", "translucent gel (opacity < 1) with fibres, Ag NPs and drug",
+    ("hydrogel", "Hydrogel composite", "translucent gel (opacity < 1) with CNC needles, Ag NPs and drug",
      [{"type": "slab", "size": [5, 1.6, 4], "color": "#CFE5F4", "opacity": 0.6, "milk": 0.14},
-      {"type": "fibers", "count": 30, "length": 2.2, "radius": 0.035, "color": "#FFFFFF", "seed": 5,
-       "region": [[-2, 2], [-0.5, 0.5], [-1.6, 1.6]], "clip": [2.3, 0.65, 1.8]},
+      {"type": "rods", "count": 120, "length": 0.6, "lengthVar": 0.6, "radius": 0.014, "color": "#FFFFFF", "seed": 5,
+       "region": [[-2.1, 2.1], [-0.55, 0.55], [-1.7, 1.7]]},
       {"type": "spheres", "count": 10, "radius": 0.24, "color": "#C9CED6", "finish": "metal", "seed": 8,
        "region": [[-2, 2], [-0.4, 0.4], [-1.5, 1.5]]},
       {"type": "spheres", "count": 25, "radius": 0.1, "color": "#3FB5C8", "seed": 9,
@@ -65,7 +65,7 @@ TILES = [
        "atomScale": 1.2},
       {"type": "molecule", "smiles": "CO[Si](CCC[N+](C)(C)CCCCCCCCCC)(OC)OC", "hydrogens": False, "pos": [3.2, 0, 0],
        "scale": 0.45, "atomScale": 1.2}]),
-    ("fibres_rods", "Fibres and rods", "curved CNC fibres and aligned rod-shaped fillers",
+    ("fibres_rods", "Fibres and rods", "flexible microfibres (fibers) and rigid CNC-like needles (rods, lengthVar)",
      [{"type": "fibers", "count": 30, "length": 3, "radius": 0.04, "color": "#C99A4B", "seed": 5,
        "region": [[-2.5, 1], [-0.5, 0.5], [-1.8, 0.5]]},
       {"type": "rods", "count": 26, "length": 0.9, "radius": 0.07, "color": "#2F6FAE", "align": "x", "seed": 3,
@@ -79,7 +79,7 @@ def render(force=False):
     for key, _, _, objs in TILES:
         spec = dict(CAM, title=key, objects=objs, shadow=key not in NO_SHADOW)
         if key == "habits":
-            spec.update(camera=[0, 3, 9], fit=0.7)
+            spec.update(camera=[0, 2.5, 10], fit=1.05)
         p = HERE / "tiles" / f"{key}.json"
         p.write_text(json.dumps(spec), encoding="utf-8")
         png = HERE / "tiles" / f"{key}_render.png"

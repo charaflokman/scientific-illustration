@@ -273,8 +273,8 @@ from ase.cluster import Icosahedron, Decahedron, Octahedron
 el, shape, n = sys.argv[1], sys.argv[2], int(sys.argv[3])
 a = {"icosahedron": lambda: Icosahedron(el, noshells=n),
      "decahedron": lambda: Decahedron(el, p=n, q=1, r=0),
-     "octahedron": lambda: Octahedron(el, length=2 * n + 1, cutoff=n),   # truncated octahedron
-     "cuboctahedron": lambda: Octahedron(el, length=2 * n + 1, cutoff=n + 1)}[shape]()
+     "octahedron": lambda: Octahedron(el, length=3 * n + 1, cutoff=n),   # truncated octahedron (regular)
+     "cuboctahedron": lambda: Octahedron(el, length=2 * n + 1, cutoff=n)}[shape]()
 a.center(about=(0, 0, 0))
 print(json.dumps({"atoms": [[s, *map(float, p)] for s, p in zip(a.get_chemical_symbols(), a.positions)]}))
 """
@@ -316,6 +316,11 @@ def photo_finish(png, spec):
     rgb = rgb * (1 - spec.get("vignette", .1) * np.clip(r - .45, 0, 1) ** 2)
     rng = np.random.default_rng(7)
     rgb = rgb + rng.normal(0, spec.get("grain", .012), (h, w, 1)) * al
+    if spec.get("background") is None:  # transparent: fade the frame edge so a floor shadow never ends in a hard cut
+        m = spec.get("feather", .07)
+        ex = np.clip(np.minimum(xx, w - 1 - xx) / (w * m), 0, 1)
+        ey = np.clip(np.minimum(yy, h - 1 - yy) / (h * m), 0, 1)
+        al = al * (np.minimum(ex, ey) ** 1.5)[..., None]
     out = np.concatenate([np.clip(rgb, 0, 1), al], -1)
     Image.fromarray((out * 255 + .5).astype(np.uint8), "RGBA").save(png)
 

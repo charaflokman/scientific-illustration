@@ -15,6 +15,7 @@ client"); when the two disagree, the client's own profile wins.
 | Decorative rods / crystals with no scientific meaning | "what are these sticks?" | nothing in the scene that the science does not contain; crystals only for crystalline materials |
 | Boxes-and-panels layout with a small 3D image | preferred an AI image with a central hero | hero-centred composition (below) |
 | Slogans, casual wording | — | formal journal prose (SKILL.md, "Write figure text like a journal") |
+| Fibre mats of thick, evenly bent tubes; CNC drawn as long curly fibres | "did not like the fibre" | draw fibres as they look in SEM: many fine fibres of near-constant diameter that meander and interweave, cut at the sample edge; CNC are short rigid needles (`rods` with `lengthVar`), never long curls |
 
 ## What clients accepted
 

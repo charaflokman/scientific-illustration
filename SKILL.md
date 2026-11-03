@@ -15,9 +15,9 @@ image-generation tools, so protect them in every deliverable:
    do come back, their manual edits survive your next render.
 2. **Faithful.** Every number, condition and claim traces to the user's material. Missing values become visible
    `[? …]` placeholders, never guesses. No fabricated data, spectra, micrographs or results.
-3. **Journal-safe.** Deterministic, code-drawn schematics and data plots (not generative images), journal sizes,
-   colour-blind-safe palette, plus a disclosure sentence. Publishers restrict AI-generated images
-   (see `references/publishing-policy.md`).
+3. **Honest about origin.** Code-drawn figures and data plots are deterministic and journal-safe. Gemini images are
+   allowed as described in "Gemini images", always checked by Claude and always disclosed, because many publishers
+   restrict AI-generated images (see `references/publishing-policy.md`).
 
 Reply in the user's language, whatever it is. Keep figure text in English unless the user asks otherwise, because
 journals expect it; lesson summaries and teaching material follow the user's language.
@@ -160,6 +160,37 @@ When signals point to several outputs, build the core still first (figure or 3D)
 that reuse it: still → summary card → video. Ask only when the use (print vs screen vs motion) is truly unknown and
 the choice would change the work a lot; otherwise pick, state it, and go.
 
+## Gemini images: Gemini draws, Claude does everything else
+
+When the user wants a rich rendered image or infographic, Gemini generates the image. Claude does the rest: intake,
+research and references, the prompt, the error check, corrections, vector text, all molecules and chemistry, plots, layout, export
+and the disclosure.
+
+1. **Prompt.** From the user's text and the references, list the panels, the exact labels and every number. Tell Gemini
+   not to draw molecules, chemical structures or formulas, micrographs, blots, spectra, photos or data plots, and to
+   leave clean empty space where molecules go. Gemini also draws **no text at all** (no letters, numbers or symbols): **Claude adds all text** as editable vector labels with `render_figure.py`. **Claude makes every molecule from SMILES** (RDKit 2D, or `render_3d.py`
+   3D with a transparent background) and places it on the image with `render_figure.py`. If the user wants their text used as it is, send
+   it unchanged.
+   Asking Gemini to remove text from an existing image failed in testing, while a new chat with a wordless scene description
+   ("textless wordless illustration ... no words, no letters, no numbers, no labels") worked. Describe scenes only.
+2. **Generate.** `python scripts/gemini_image.py prompt.txt -o draft.png` (`GEMINI_API_KEY`; the API needs billing). With no
+   paid API, use the Gemini website in a browser where the user is signed in: pick the image tool, send the prompt,
+   download the full-size image. Stop for the user at any sign-in or payment step.
+3. **Check at full resolution, in crops.** Screen-sized previews hide errors. Read every word and report by location:
+   - Spelling and invented words in all text.
+   - Numbers, units and citations: each must match the source, and none may be invented.
+   - Chemistry: Si drawn as S, Si=O, valence, charges and counter-ions, N+ with H on a quaternary ammonium, wrong
+     functional groups, orientation on a surface. Any molecule Gemini drew anyway is removed and replaced by Claude's.
+   - Fabricated evidence: anything resembling a TEM/SEM image, photo, blot or spectrum, and curves with no data behind
+     them. Remove these; real data goes in a `[? ...]` placeholder for the user's own images.
+   - Claims and direction: arrows, cause and effect, "proposed" stated as proven, anything absent from the source.
+4. **Fix.** Correct with `--edit` and a narrow instruction ("Change only ..."), then check the whole image again, because
+   edits can break other parts. After two failed attempts on an item, cover it with editable output from
+   `render_figure.py`: real text, RDKit structures, `plot_data.py` plots.
+5. **Report.** Give the user the list of errors found, fixed and remaining. Never call an image error-free when any part
+   could not be read. State that it is AI-generated, keep the `.provenance.json`, include a disclosure sentence, and
+   tell the user to check the target journal's policy, since the journal may refuse it.
+
 ## Pick the mode
 
 | The user wants | Mode | Main tool | Output |
@@ -188,7 +219,7 @@ Use code-drawn icons only for materials parts the libraries lack (films, fillers
 scene: one large hero illustration per panel, short labels (≤ 6 words), details and numbers in the caption.
 Example: `assets/examples/dispersion_wound_dressing_v2.json`.
 
-**Rendered 3D hero (the "Nano Banana look" without AI images):** build the scene with `render_3d.py`
+**Rendered 3D hero (code-drawn alternative for journals that refuse AI images):** build the scene with `render_3d.py`
 (types slab, scaffold, fibers, brush, spheres with finish metal/glass/matte), export a transparent PNG with
 `--png 2400x1700`, then place it as an `image` element in a `render_figure.py` spec and put all text, arrows and
 RDKit chemistry on top as editable vector. Example: `assets/examples/silane_roles.json` + `hero_dressing.json`.
@@ -346,7 +377,7 @@ peak/feature table with sources and confidence levels.
 - Never alter, enhance or generate micrographs, blots, spectra or photos.
 
 ## Files in this skill
-- `scripts/research.py` topic research (OpenAlex, Europe PMC, Wikipedia) · `scripts/render_figure.py` spec → SVG + editor · `scripts/icons.py` built-in icons · `scripts/editor.html`
+- `scripts/gemini_image.py` Gemini image generation and correction · `scripts/research.py` topic research (OpenAlex, Europe PMC, Wikipedia) · `scripts/render_figure.py` spec → SVG + editor · `scripts/icons.py` built-in icons · `scripts/editor.html`
   editor template · `scripts/export.py` PNG/PDF + layout check · `scripts/plot_data.py` data plots/panels ·
   `scripts/render_diagram.py` Mermaid/D2/Graphviz · `scripts/bioicons.py` icon search/fetch with licences ·
   `scripts/setup_check.py` dependency report · `scripts/render_3d.py` 3D scenes · `scripts/render_summary.py`

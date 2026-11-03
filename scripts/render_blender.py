@@ -309,8 +309,9 @@ class MeshBuilder:
         return obs
 
 
-def tubes(name, o, paths, r, m, radii=None, res=3):
-    """Smooth bevelled curves (fibres, chains): one curve object, many splines; radii scales each spline."""
+def tubes(name, o, paths, r, m, radii=None, res=3, wobble=.18):
+    """Smooth bevelled curves (fibres, chains): one curve object, many splines; radii scales each spline,
+    wobble lets the diameter swell and narrow along it (0 for uniform electrospun fibres)."""
     cu = bpy.data.curves.new(name, "CURVE")
     cu.dimensions = "3D"
     cu.bevel_depth = r
@@ -322,7 +323,7 @@ def tubes(name, o, paths, r, m, radii=None, res=3):
         ph = i * 1.7
         for k, (p, q) in enumerate(zip(sp.points, pts)):
             p.co = (*q, 1)
-            p.radius = (radii[i] if radii else 1.0) * (1 + .18 * math.sin(ph + k * 1.3))
+            p.radius = (radii[i] if radii else 1.0) * (1 + wobble * math.sin(ph + k * 1.3))
         sp.use_endpoint_u = True
         sp.order_u = min(4, len(pts))
         sp.resolution_u = 8 if len(pts) < 8 else 4
@@ -459,22 +460,36 @@ for o in SPEC["objects"]:
             porous(name, o, size, mat(c, kind or "frosted", op), style, cell, o.get("seed", 7))
             continue
         if style == "nonwoven":
+            # SEM look of an electrospun mat: many fine fibres of constant (but fibre-to-fibre lognormal) diameter,
+            # each running across the whole sample with gentle bends, weaving up and down through the thickness,
+            # and cut where it leaves the sample, like a real cut edge
             sx, sy, sz = size
             paths, radii = [], []
-            for i in range(o.get("count", 160)):  # electrospun look: many thin fibres, gently curling
-                layer = -sy / 2 + sy * (i % 6 + .5) / 6
-                ang = V() * math.pi
-                d = Vector((math.cos(ang), 0, math.sin(ang)))
-                c0 = Vector(((V() - .5) * sx, layer, (V() - .5) * sz))
-                Lf = (sx + sz) * .9
-                q = perp(d)
-                ph, amp = V() * 6.3, (.2 + .4 * V()) * min(sx, sz) * .1
-                pts = [c0 + d * (Lf * (s - .5)) + q * math.sin(ph + s * 9) * amp
-                       + perp(q) * math.cos(ph * 1.3 + s * 17) * amp * .4
-                       + Vector((0, math.sin(ph * 2 + s * 13) * sy * .12, 0)) for s in [k / 19 for k in range(20)]]
-                paths.append([Vector((max(-sx / 2, min(sx / 2, p.x)), p.y, max(-sz / 2, min(sz / 2, p.z)))) for p in pts])
-                radii.append(.5 + 1.1 * V())
-            tubes(name, o, paths, o.get("radius", .05), mat(c, kind or "frosted", op), radii)
+            for i in range(o.get("count", 900)):
+                # the heading drifts smoothly (two incommensurate sines): fibres meander and curl as in SEM images
+                ang, a1, a2 = V() * math.pi, .5 + .7 * V(), .2 + .4 * V()
+                f1, f2, k1, k2 = 2 + 4 * V(), 7 + 8 * V(), V() * 6.3, V() * 6.3
+                Lf = (sx + sz) * 1.4
+                n_pt = 90
+                pt = Vector(((V() - .5) * sx, (V() - .5) * sy * .7, (V() - .5) * sz))
+                pt -= Vector((math.cos(ang), 0, math.sin(ang))) * Lf / 2
+                y0, pts = pt.y, []
+                for j in range(n_pt):
+                    t = j / (n_pt - 1)
+                    h = ang + a1 * math.sin(k1 + t * f1) + a2 * math.sin(k2 + t * f2)
+                    pt = pt + Vector((math.cos(h), 0, math.sin(h))) * (Lf / n_pt)
+                    pts.append(Vector((pt.x, y0 + math.sin(k2 * 1.7 + t * 31) * sy * .22, pt.z)))
+                best, cur = [], []
+                for pt in pts:
+                    if abs(pt.x) <= sx / 2 and abs(pt.z) <= sz / 2:
+                        cur.append(pt)
+                    else:
+                        best, cur = max(best, cur, key=len), []
+                best = max(best, cur, key=len)
+                if len(best) >= 4:
+                    paths.append(best)
+                    radii.append(math.exp(.35 * (V() + V() + V() - 1.5) * 2))
+            tubes(name, o, paths, o.get("radius", .02), mat(c, kind or "frosted", op), radii, 2, wobble=.02)
             continue
         sx, sy, sz = size  # "struts": the original lattice
         n = o.get("cells", [8, 2, 5])
@@ -579,7 +594,7 @@ for o in SPEC["objects"]:
                     e = Euler((0, (R() - .5) * .3, math.pi / 2 + (R() - .5) * .3))
                 else:
                     e = Euler((R() * 6.3, R() * 6.3, R() * 6.3))
-                L = o.get("length", 1)
+                L = o.get("length", 1) * (1 + o.get("lengthVar", 0) * (V() - .5))  # e.g. CNC: 0.6 = +/-30 %
                 d = e.to_matrix() @ Vector((0, L / 2, 0))
                 r = o.get("radius", .06)
                 mb.cyl(m, p - d, p + d, r, 16)
