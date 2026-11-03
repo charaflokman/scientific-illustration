@@ -15,8 +15,8 @@ image-generation tools, so protect them in every deliverable:
    do come back, their manual edits survive your next render.
 2. **Faithful.** Every number, condition and claim traces to the user's material. Missing values become visible
    `[? …]` placeholders, never guesses. No fabricated data, spectra, micrographs or results.
-3. **Honest about origin.** Code-drawn figures and data plots are deterministic and journal-safe. Gemini images are
-   allowed as described in "Gemini images", always checked by Claude and always disclosed, because many publishers
+3. **Honest about origin.** Route B figures and data plots are deterministic and journal-safe. AI images are
+   used only in Route A (see "Two routes"), always checked by Claude and always disclosed, because many publishers
    restrict AI-generated images (see `references/publishing-policy.md`).
 
 Reply in the user's language, whatever it is. Keep figure text in English unless the user asks otherwise, because
@@ -45,6 +45,29 @@ images and what in them is wrong); (2) if the lesson is general, add it to `refe
 changing anything: composition, palette, materials, scale of contents, light, insets, text, and every scientific
 error in it, then say which parts you will match and which you will not copy. Keep accepted outputs unchanged
 (pin their specs) unless the client asks.
+
+## Two routes: choose one at the start of every job
+
+Ask once, right after the tool check, before anything is drawn:
+
+| | **Route A: with AI** | **Route B: without AI** |
+|---|---|---|
+| Who draws the scene | an image AI the user chooses | code: `render_figure.py`, `render_3d.py --blender`, `plot_data.py`, library art |
+| Who writes text and chemistry | Claude, always | Claude, always |
+| Look | richest, fastest | fully reproducible, every part editable |
+| Journals | disclosure required; some refuse it | no AI disclosure needed |
+| Needs | the user signed in to the AI | local tools only |
+
+**Route A steps:** the user names any image AI. Open it in Claude's built-in browser and ask them to sign in themselves;
+never ask for or type a password, and never pay or subscribe for them. Then follow "Route A: the AI draws, Claude does
+everything else". If that AI fails (sign-in blocked, no image, no download), direct them to Gemini, the tested service.
+If Gemini fails too or they decline it, switch to Route B.
+
+**Route B steps:** skip every AI service and follow "Pick the mode" and "Workflow". Choose it when the user asks, or
+when the target journal refuses AI images.
+
+Save the choice in `client_profile.md`, do not mix routes in one figure unless asked, and always say which route
+produced a deliverable.
 
 ## Project intake: ask about the project first, with choices
 
@@ -160,11 +183,10 @@ When signals point to several outputs, build the core still first (figure or 3D)
 that reuse it: still → summary card → video. Ask only when the use (print vs screen vs motion) is truly unknown and
 the choice would change the work a lot; otherwise pick, state it, and go.
 
-## Gemini images: Gemini draws, Claude does everything else
+## Route A: the AI draws, Claude does everything else
 
-When the user wants a rich rendered image or infographic, Gemini generates the image. Claude does the rest: intake,
-research and references, the prompt, the error check, corrections, vector text, all molecules and chemistry, plots, layout, export
-and the disclosure.
+The steps name Gemini, but they apply to any service. In its website, choose its image tool first when it has one
+(otherwise it may reply with text), and if it still replies with text, ask it to generate the image now.
 
 1. **Prompt.** From the user's text and the references, list the panels, the exact labels and every number. Tell Gemini
    not to draw molecules, chemical structures or formulas, micrographs, blots, spectra, photos or data plots, and to

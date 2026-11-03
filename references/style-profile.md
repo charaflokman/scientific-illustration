@@ -10,10 +10,12 @@ client"); when the two disagree, the client's own profile wins.
 |---|---|---|
 | Plain primitives (spheres on straight sticks, flat slabs, grey floor) | "old and undeveloped", "no details" | every object carries its own structural and surface detail (see the 3D section of SKILL.md) |
 | Sea-urchin nanoparticles: straight identical ligands, mirror core | "too simple", "I don't like it" | curved ligands of varied length, faceted or atomic core, depth of field, neighbours out of focus |
-| Clear refractive gel block | "looks like glass" | hydrogel = icy, pale, slightly milky, water IOR, soft highlights; never a clean glass box |
+| Clear refractive gel block | "looks like glass" | hydrogel = soft, pale, milky, water IOR, soft highlights; never a clean glass box |
 | Opaque saturated gel | (hides the contents) | the inside must stay legible: fibres, particles, drug visible through a light haze |
 | Decorative rods / crystals with no scientific meaning | "what are these sticks?" | nothing in the scene that the science does not contain; crystals only for crystalline materials |
 | Boxes-and-panels layout with a small 3D image | preferred an AI image with a central hero | hero-centred composition (below) |
+| Hydrogel dressing drawn as a clear thick block | "looks like an ice cube" | a dressing is a thin, soft, flexible, milky sheet conforming to the skin; ask for that explicitly and never for icy or cubic blocks |
+| Photo-style AI image of tissue | client agreed it looked like raw meat and could pass as real data | realistic materials on a clean anatomical section, clearly an illustration, labelled inside the figure |
 | Slogans, casual wording | — | formal journal prose (SKILL.md, "Write figure text like a journal") |
 | Fibre mats of thick, evenly bent tubes; CNC drawn as long curly fibres | "did not like the fibre" | draw fibres as they look in SEM: many fine fibres of near-constant diameter that meander and interweave, cut at the sample edge; CNC are short rigid needles (`rods` with `lengthVar`), never long curls |
 
