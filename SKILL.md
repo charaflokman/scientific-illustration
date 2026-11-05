@@ -263,8 +263,9 @@ wrinkled translucent envelope, `pili`, `flagella`; `crystals` only when the mate
 from SMILES with split-colour bonds. Lighting is a Poly Haven studio HDRI (`hdri`, CC0) plus soft key/fill/rim and
 reflection softboxes; `blur` and `focus` set depth of field; `background: null` gives a transparent PNG for insets;
 `shadow: false` for floating objects. The camera is fitted tightly to the projected scene (`fit`, default 1.06, is the
-margin), the contact shadow covers only the footprint (`shadowSize`, default 1.25), and tone mapping is AgX Punchy
-with `exposure` -0.25 (`look` overrides), so pale palettes do not wash out to grey-white. Compose like a magazine render: one large hero object in focus, neighbours
+margin), the contact shadow covers only the footprint (`shadowSize`, default 1.25), and tone mapping is AgX Medium High
+Contrast (`"look": "AgX - Punchy"` and `exposure` in stops when a pale scene washes out). Metal `spheres` are
+faceted satin-silver particles (`"facets": false` for smooth spheres), because mirror spheres inside a gel read as air bubbles. Compose like a magazine render: one large hero object in focus, neighbours
 behind it out of focus, nothing decorative that is not in the science (no stray rods or crystals "for looks").
 Molecular Nodes (Blender add-on, installed per machine) is the route for proteins and PDB/AlphaFold structures.
 

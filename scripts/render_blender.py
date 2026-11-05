@@ -180,6 +180,16 @@ def mat(color, kind=None, opacity=1.0, milk=.35):
         mr.inputs["To Min"].default_value, mr.inputs["To Max"].default_value = .06, .26
         nt.links.new(mr.outputs["Result"], b.inputs["Roughness"])
         b.inputs["Anisotropic"].default_value = .25
+    elif kind == "nanometal":
+        # metal NPs embedded in a gel: a perfect mirror there reflects the clear gel and reads as an air bubble,
+        # so use a darker, satin silver whose facets catch the light as solid metal
+        b.inputs["Base Color"].default_value = hexcol("#c2c7ce") if color.lower() in ("#c9ced6", "#dde2e8", "#c0c0c0") else col
+        b.inputs["Metallic"].default_value = 1.0
+        nz = _bump(nt, b, 40, .05, .002)
+        mr = nt.nodes.new("ShaderNodeMapRange")
+        nt.links.new(nz.outputs["Factor"], mr.inputs["Value"])
+        mr.inputs["To Min"].default_value, mr.inputs["To Max"].default_value = .12, .3
+        nt.links.new(mr.outputs["Result"], b.inputs["Roughness"])
     elif kind == "glass":
         b.inputs["Transmission Weight"].default_value = 1.0
         b.inputs["Roughness"].default_value = .05
@@ -593,14 +603,20 @@ for o in SPEC["objects"]:
         mb.flush(name, o, smooth=False)
         continue
     elif t in ("spheres", "rods"):
-        m = mat(c, kind)
+        # metal spheres are faceted particles (low-poly, flat-shaded, randomly turned) unless "facets": false
+        facet = t == "spheres" and kind == "metal" and o.get("facets", True)
+        m = mat(c, "nanometal" if facet else kind)
         for i in range(o.get("count", 30)):
             if o.get("cluster"):
                 x, y, z, sp = o["cluster"]
                 p = Vector((x + (R() - .5) * sp, y + (R() - .5) * sp * .6, z + (R() - .5) * sp))
             else:
                 p = in_region(o.get("region", [[-3, 3], [-.3, .3], [-2, 2]]), R)
-            if t == "spheres":
+            if facet:
+                r = o.get("radius", .15) * (.85 + .3 * V())
+                rot = Euler((R() * 6.3, R() * 6.3, R() * 6.3)).to_matrix().to_4x4()
+                bmesh.ops.create_icosphere(mb._bm(m), subdivisions=1, radius=r, matrix=Matrix.Translation(p) @ rot)
+            elif t == "spheres":
                 mb.sphere(m, p, o.get("radius", .15) * (.85 + .3 * V()), 32)
             else:
                 if o.get("align") == "x":
@@ -682,7 +698,7 @@ for o in SPEC["objects"]:
         mb.cyl(m, a, a + d * .8, .05, 24)
         mb.cone(m, a + d * .8, b, .15)
         o = dict(o, pos=None)
-    mb.flush(name, o)
+    mb.flush(name, o, smooth=not (t == "spheres" and o.get("finish") == "metal" and o.get("facets", True)))
 
 # -- frame the scene ------------------------------------------------------------------------------------------------
 bpy.context.view_layer.update()
@@ -844,14 +860,11 @@ sc.render.image_settings.file_format = "PNG"
 sc.render.image_settings.color_mode = "RGBA"
 try:
     sc.view_settings.view_transform = "AgX"
-    # "Punchy" keeps pale palettes from washing out to grey-white; a slight negative exposure keeps highlights
-    sc.view_settings.look = SPEC.get("look", "AgX - Punchy")
+    # default keeps the pale high-key look clients chose; "look": "AgX - Punchy" adds saturation when a scene washes out
+    sc.view_settings.look = SPEC.get("look", "AgX - Medium High Contrast")
 except Exception:
-    try:
-        sc.view_settings.look = "AgX - Medium High Contrast"
-    except Exception:
-        pass
-sc.view_settings.exposure = SPEC.get("exposure", -0.25)
+    pass
+sc.view_settings.exposure = SPEC.get("exposure", 0)
 sc.render.filepath = OUT
 bpy.ops.render.render(write_still=True)
 print("BLENDER_PNG", OUT, sc.cycles.device)

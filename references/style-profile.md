@@ -18,6 +18,7 @@ client"); when the two disagree, the client's own profile wins.
 | Photo-style AI image of tissue | client agreed it looked like raw meat and could pass as real data | realistic materials on a clean anatomical section, clearly an illustration, labelled inside the figure |
 | Slogans, casual wording | — | formal journal prose (SKILL.md, "Write figure text like a journal") |
 | Fibre mats of thick, evenly bent tubes; CNC drawn as long curly fibres | "did not like the fibre" | draw fibres as they look in SEM: many fine fibres of near-constant diameter that meander and interweave, cut at the sample edge; CNC are short rigid needles (`rods` with `lengthVar`), never long curls |
+| Smooth mirror Ag spheres inside a gel | "look like bubbles" | metal NPs in a gel are faceted satin-silver particles (default for metal `spheres`); a mirror sphere reflects the clear gel and reads as air |
 
 ## What clients accepted
 
