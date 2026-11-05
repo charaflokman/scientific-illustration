@@ -389,7 +389,8 @@ montage of 3–6 images) and `cta` (closing line + link). Rhythm that reads as p
 data. Example: `assets/examples/promo_pro.json`. Pro videos get an original soundtrack automatically (`scripts/make_audio.py`: a calm synthesised music bed plus whooshes on cuts, ticks on counters, pops on bars and tiles, a riser and hit on the call to action), so there is no music licence to clear; set `"audio": "path/to/track.mp3"` to use the user's own track, or `"audio": null` for silence. The look is editorial (serif headlines, mono numbers, one warm accent, film grain); avoid glowing blobs, gradient text and neon, which read as generic AI. `--template basic` keeps the plain white title/image/bullets look.
 Keep it cheap in tokens and time: write the spec, render `--still N` for one or two scenes and look at them, then render the MP4 once.
 Use 3–6 s per scene, one idea per scene, captions under 12 words, and put licence credits in `credits`.
-For anything the template does not cover (voice-over, captions from audio, charts, transitions, maps), read only the matching file under `references/remotion/` (the official Remotion agent skill, routed from its `SKILL.md`), and write a custom composition in the cached project.
+For anything the template does not cover (voice-over, captions from audio, charts, transitions, maps), read only the matching file under `references/remotion/` (the official Remotion agent skill, routed from its `SKILL.md`;
+it is not shipped with this skill, so when the folder is missing use the docs at remotion.dev/docs), and write a custom composition in the cached project.
 Remotion is free for individuals, non-profits and companies of up to 3 people; tell the user that larger companies need a Remotion licence.
 
 ## Simulation mode
