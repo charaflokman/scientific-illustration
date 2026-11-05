@@ -275,7 +275,11 @@ $('#paper').addEventListener('pointerup', e => {
 
 // ---------- text editing ----------
 $('#paper').addEventListener('dblclick', e => {
-  const t = e.target.closest('text'); if (!t) return;
+  // pointer capture (set on pointerdown for dragging) retargets click/dblclick to #paper itself,
+  // so find the text under the pointer instead of trusting e.target
+  const hit = document.elementFromPoint(e.clientX, e.clientY) || e.target;
+  const t = (hit.closest && hit.closest('text')) || e.target.closest('text'); if (!t) return;
+  e.preventDefault();
   const box = $('#editbox'), r = t.getBoundingClientRect(), s = $('#stage').getBoundingClientRect();
   box.style.left = (r.left - s.left + $('#stage').scrollLeft) + 'px'; box.style.top = (r.top - s.top + $('#stage').scrollTop - 4) + 'px';
   box.style.display = 'block'; box.value = t.dataset.raw ?? t.textContent; box.focus(); box.select();
