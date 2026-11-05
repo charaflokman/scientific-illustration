@@ -6,6 +6,8 @@ Nothing is installed automatically.
 """
 import importlib
 import os
+import tempfile
+import subprocess
 import shutil
 import sys
 from pathlib import Path
@@ -19,6 +21,10 @@ PY_MODULES = [
     ("rdkit", "molecule drawing (optional)", "pip install rdkit"),
     ("playwright", "SVG -> PNG/PDF export and layout check", "pip install playwright  (uses installed Chrome/Edge)"),
 ]
+
+
+# pip package to install per module (Windows PyMOL: the wheel that bundles its DLLs)
+PIP_NAMES = {"pymol": "pymol-open-source-whl" if os.name == "nt" else "pymol-open-source", "PyScaffolder": "PyScaffolder numpy"}
 
 
 def find_browser():
@@ -88,8 +94,17 @@ def heavy_tools():
         py = CACHE / "venvs" / venv / ("Scripts/python.exe" if os.name == "nt" else "bin/python")
         site = list((CACHE / "venvs" / venv).glob("**/site-packages"))
         ok = py.exists() and any(p.name.lower().startswith(mod.lower()) for s in site for p in s.iterdir())
-        out.append((ok, mod.lower(), f"venv {py.parent.parent} ({lic})" if py.exists() else
-                    f"missing (optional): python -m venv {CACHE / 'venvs' / venv} && <venv python> -m pip install {mod}"))
+        if ok:  # a folder is not enough: PyMOL once installed without its DLLs, PyScaffolder without numpy
+            try:
+                r = subprocess.run([str(py), "-I", "-c", f"import {mod}"], capture_output=True, text=True, timeout=120,
+                                   cwd=tempfile.gettempdir())  # cellpack writes ./.creds on import
+                ok, err = r.returncode == 0, (r.stderr.strip().splitlines() or [""])[-1]
+            except Exception as e:
+                ok, err = False, str(e)
+        pkg = PIP_NAMES.get(mod, mod)
+        out.append((ok, mod.lower(), f"venv {py.parent.parent} ({lic})" if ok else
+                    f"broken: {err} -> <venv python> -m pip install {pkg}" if py.exists() and site else
+                    f"missing (optional): python -m venv {CACHE / 'venvs' / venv} && <venv python> -m pip install {pkg}"))
     rem = (CACHE / "remotion" / "node_modules").exists()
     out.append((rem, "remotion", "ready (render_video.py)" if rem else "missing: render_video.py installs it on first use (needs node)"))
     node = shutil.which("node")
