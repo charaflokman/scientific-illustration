@@ -96,8 +96,9 @@ def heavy_tools():
         ok = py.exists() and any(p.name.lower().startswith(mod.lower()) for s in site for p in s.iterdir())
         if ok:  # a folder is not enough: PyMOL once installed without its DLLs, PyScaffolder without numpy
             try:
-                r = subprocess.run([str(py), "-I", "-c", f"import {mod}"], capture_output=True, text=True, timeout=120,
-                                   cwd=tempfile.gettempdir())  # cellpack writes ./.creds on import
+                with tempfile.TemporaryDirectory() as wd:  # throwaway cwd: cellpack writes ./.creds on import
+                    r = subprocess.run([str(py), "-I", "-c", f"import {mod}"], capture_output=True, text=True, timeout=120,
+                                       cwd=wd)
                 ok, err = r.returncode == 0, (r.stderr.strip().splitlines() or [""])[-1]
             except Exception as e:
                 ok, err = False, str(e)
