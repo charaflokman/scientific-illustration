@@ -281,6 +281,17 @@ Blender extension; `setup_check.py` lists what is present). Pick by subject, and
 | Crowded cell interiors (mesoscale) | cellPACK (`venvs/cellpack`, Python 3.9) | pack proteins and organelles into compartments from a recipe |
 | TPMS scaffolds for exact geometry | PyScaffolder (`venvs/scaffold`), microgen (`venvs/microgen`) | export a mesh when the scaffold geometry itself is the data |
 
+Tool status (smoke-tested 2026-11-05 on Windows, Blender 5.1):
+- Works: ASE (Ag icosahedron, 147 atoms, written to .xyz/.pdb); OVITO (Tachyon PNG of that .xyz); Atomic Blender
+  (`bpy.ops.import_mesh.xyz`); Molecular Nodes (`mn.Molecule.load(path).add_style("ball_and_stick")`); microgen
+  (`Tpms(surface_function=gyroid, ...).generate_vtk(type_part="sheet")` → STL); v_ase and cellPACK import.
+- In Blender scripts, Molecular Nodes is an extension: `importlib.import_module("bl_ext.user_default.molecularnodes")`
+  after `addon_utils.enable(...)`; plain `import molecularnodes` fails.
+- cellPACK writes `./.creds` (the OS username) into the current folder on import: run it only from a scratch work
+  folder, never from the client's project folder, and delete that file afterwards.
+- Broken until repaired: PyMOL (`_cmd` cannot load: the venv lacks glew32, freetype, libpng16, libxml2 and netcdf DLLs;
+  needs a wheel that bundles them) and PyScaffolder (venv has no numpy). Use Molecular Nodes for proteins meanwhile.
+
 A capability sheet with one render per object type is built by `scripts/gallery.py --out <folder>`; show
 it to new users so they can choose a look.
 
