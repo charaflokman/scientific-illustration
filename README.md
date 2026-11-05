@@ -9,7 +9,7 @@ An open-source skill for AI coding agents that turns a paragraph of your paper i
 
 [![Licence: MIT](https://img.shields.io/badge/code-MIT-E9B949)](LICENSE)
 [![Art: CC BY 4.0](https://img.shields.io/badge/art-CC%20BY%204.0%20%2F%20CC0-0F1115)](#free-art-libraries-8806-drawings)
-[![Version](https://img.shields.io/badge/version-1.1.0-0F1115)](CHANGELOG.md)
+[![Version](https://img.shields.io/badge/version-1.2.0-0F1115)](CHANGELOG.md)
 [![Website](https://img.shields.io/badge/website-live-E9B949)](https://charaflokman.github.io/scientific-illustration/)
 
 <img src="docs/gallery/video_demo.gif" width="760" alt="Animated preview: a typed prompt about wound-dressing dispersants turns into a three-panel scientific figure, followed by a comparison with a quick slide sketch.">
@@ -27,7 +27,7 @@ An open-source skill for AI coding agents that turns a paragraph of your paper i
 | A scientific figure / graphical abstract | SVG · PNG · PDF + a browser editor | ✅ drag, recolour, retype |
 | A plot of your data (FTIR, XRD, TGA, tensile, release…) | Multi-panel figure, vector text | ✅ |
 | A flowchart, PRISMA or mind map from text | SVG · PNG | ✅ |
-| A 3D model or 3D image | Interactive 3D page + transparent PNG (up to 4×) | ✅ in the page |
+| A 3D model or 3D image | Interactive 3D page + transparent PNG (up to 4×), or a photoreal Blender Cycles render | ✅ in the page / in the spec |
 | A lesson summary | Editable A4 / slide card · PNG · PDF | ✅ type directly in it |
 | A process simulation | Interactive HTML with sliders | ✅ |
 | A short video | MP4 with an original soundtrack (Remotion) | ✅ change the JSON, re-render |
@@ -45,7 +45,7 @@ An open-source skill for AI coding agents that turns a paragraph of your paper i
 
 The agent wrote [this spec](assets/examples/dispersion_wound_dressing_v2.json); change any word or colour in it and render again.
 
-## Gallery — no AI image generation
+## Gallery — code-drawn (Route B)
 
 <table>
 <tr>
@@ -63,6 +63,16 @@ The agent wrote [this spec](assets/examples/dispersion_wound_dressing_v2.json); 
 
 ## How it works
 
+Every job starts with a choice of two routes:
+
+- **Route A, with AI:** an image AI you choose (you sign in yourself in the agent's browser; Gemini is the tested
+  fallback) draws only the scene. The agent adds every label, draws every molecule from SMILES, checks the image for
+  errors in crops and writes the AI disclosure. No AI micrographs, spectra or data plots.
+- **Route B, without AI:** everything is drawn by code, fully reproducible, no disclosure needed.
+
+Either way the agent first asks a few multiple-choice questions about your project, searches the literature and shows
+you the references, and remembers your feedback (`client_profile.md` in your project folder) for the next request.
+
 1. The agent writes a short **JSON spec** (a few thousand tokens) instead of drawing pixels.
 2. Python / Node scripts render it. Same spec → same result, every time.
 3. The agent looks at the result, fixes overlaps, and hands you the output together with its spec.
@@ -70,11 +80,26 @@ The agent wrote [this spec](assets/examples/dispersion_wound_dressing_v2.json); 
 ## Install
 
 **Requirements:** Windows, macOS or Linux · Python 3.10+ · Node 18+ (for 3D and video) · ~300 MB for video tools, ~1 GB optional for the art libraries.
+Optional: [Blender](https://www.blender.org) for photoreal 3D (tested with 5.1; GPU recommended), and Chrome or Edge for export.
 
 ```bash
 git clone https://github.com/charaflokman/scientific-illustration ~/.claude/skills/scientific-illustration
-python ~/.claude/skills/scientific-illustration/scripts/setup_check.py
+python ~/.claude/skills/scientific-illustration/scripts/setup_check.py --first-run
 ```
+
+`setup_check.py` lists what is ready and what is missing, with the install command for each piece; the agent runs it on
+first use and asks before installing anything. Python tools for specialised 3D (ASE, OVITO, PyMOL, cellPACK, TPMS
+scaffolds) are optional and live in their own virtual environments.
+
+### First test (10 minutes)
+
+1. Open your agent in an empty project folder and ask, in any language:
+   *"Make a graphical abstract of chitosan films with ZnO nanoparticles for food packaging."*
+2. Answer the route question (A or B) and the short project questions (e.g. `1a 2a 3b 4b …`).
+3. Check the references it shows, then open the `.editor.html` file it gives you: double-click any label to retype it,
+   drag elements, and save the SVG.
+4. Tell it what you like or dislike ("too simple", "the gel looks like glass"): it records the feedback and redraws.
+5. Try your own data: *"Plot my FTIR and TGA CSVs as panels (a) and (b) with a T5% table."*
 
 Other agents: clone into `~/.codex/skills/`, `~/.gemini/skills/` or `.agents/skills/`, or point your agent at [`AGENTS.md`](AGENTS.md). Works with Claude Code, Codex CLI, Gemini CLI, Cursor, Copilot, Cline, OpenCode and others, with any model.
 
@@ -98,18 +123,19 @@ Then ask in plain words, in any language:
 
 ## Limitations
 
-- Schematics and 3D renders only — no photo-realism, micrographs or invented data.
+- Schematics, 3D renders and (Route A) disclosed AI scenes only — never micrographs, spectra or invented data.
+- Some journals refuse AI-generated images: use Route B for those, and check the journal's policy.
 - Library art is high-resolution PNG; labels and shapes stay vector.
 - You still check the science: a wrong prompt gives a wrong figure.
 - Smaller models may need a second pass on layout.
-- Video rendering takes a few minutes and needs Node.
+- Video rendering takes a few minutes and needs Node; photoreal renders take 1–5 minutes on a GPU.
 
 ## Privacy and safety
 
 - Rendering runs on your computer; nothing about your work is uploaded by the skill. What your agent sends to its own provider follows that agent's settings.
 - Downloaded SVGs are cleaned of scripts, event handlers and external links.
 - npm packages are pinned and installed with install scripts turned off.
-- No API keys, cookies or logins are stored.
+- No API keys, cookies or logins are stored. In Route A you sign in to the image AI yourself; the agent never types a password.
 
 ## Licence and citation
 

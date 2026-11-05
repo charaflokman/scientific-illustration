@@ -4,8 +4,8 @@ title: "Scientific Illustration: an AI agent skill for editable research figures
 type: software
 authors:
   - alias: charaflokman
-version: 1.1.0
-date-released: 2026-10-31
+version: 1.2.0
+date-released: 2026-11-05
 license: MIT
 repository-code: "https://github.com/charaflokman/scientific-illustration"
 url: "https://charaflokman.github.io/scientific-illustration/"

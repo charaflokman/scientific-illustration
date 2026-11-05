@@ -18,3 +18,17 @@ First public release.
 - `research.py`: researches a topic before drawing (OpenAlex, Europe PMC, Wikipedia; no API key) and returns a brief with key terms and numbered references.
 - Simple vs detailed versions: the skill asks for style and level together and can derive both from one spec.
 - Skill text is now English only and replies in the user's language.
+
+## 1.2.0 — 2026-11-05
+
+- Two routes asked at the start of every job: Route A (an image AI of the user's choice draws only the scene; the agent
+  does all text, chemistry from SMILES, error checking and disclosure) and Route B (fully code-drawn).
+- Project intake with multiple-choice questions, literature search with references shown, and client feedback kept in
+  `client_profile.md` and `references/style-profile.md`.
+- Photoreal 3D with Blender Cycles (`render_3d.py --blender`): milky gels, SEM-like fibre mats, porous scaffolds,
+  faceted Ag NPs (ASE lattices), bacteria, molecules from SMILES; tight camera framing and footprint-sized shadows.
+- Specialised tools tested and documented: ASE, OVITO, PyMOL, Molecular Nodes, Atomic Blender, microgen, PyScaffolder,
+  cellPACK; `setup_check.py` imports each one to catch broken installs.
+- Look decisions and an "AI-look tells" audit before delivery; full CPK table (Zn and other metals).
+- Fixes: double-click editing in the figure editor, `-o` accepted by `pixel_scene.py` and `render_video.py`,
+  `--still` writes a `.png`, clear error when a video image is missing.

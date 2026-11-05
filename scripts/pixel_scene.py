@@ -210,9 +210,13 @@ class Scene:
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("spec")
-    ap.add_argument("out")
+    ap.add_argument("out", nargs="?")
+    ap.add_argument("-o", dest="out_opt", help="output PNG (same as the positional out)")
     ap.add_argument("--scale", type=int, default=6)
     a = ap.parse_args()
+    a.out = a.out or a.out_opt
+    if not a.out:
+        ap.error("give the output PNG path")
     spec = json.loads(Path(a.spec).read_text(encoding="utf-8"))
     s = Scene(spec)
     labels = []

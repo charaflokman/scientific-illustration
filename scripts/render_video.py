@@ -75,11 +75,15 @@ def soundtrack(spec, pub, template):
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("spec")
-    ap.add_argument("out")
+    ap.add_argument("out", nargs="?")
+    ap.add_argument("-o", dest="out_opt", help="output MP4 (same as the positional out)")
     ap.add_argument("--template", choices=["basic", "pro"], default="pro",
                     help="pro: dark motion graphics (hook, counter, compare, bars, showcase, grid, cta); basic: title/image/bullets")
     ap.add_argument("--still", type=int, help="render one frame from the middle of this scene (0-based) as PNG")
     a = ap.parse_args()
+    a.out = a.out or a.out_opt
+    if not a.out:
+        ap.error("give the output MP4 path")
     ensure()
     spec_path = Path(a.spec).resolve()
     spec = json.loads(spec_path.read_text(encoding="utf-8"))
@@ -88,6 +92,9 @@ def main():
     pub.mkdir()
     def stage(rel):
         src = (spec_path.parent / rel).resolve()
+        if not src.is_file():  # example specs point at stills rendered by the other examples
+            sys.exit(f"image not found: {src}. Render that still first (figure, 3D, summary or pixel scene) "
+                     f"or fix the path in {spec_path.name}; paths are relative to the spec.")
         name = hashlib.md5(str(src).encode()).hexdigest()[:8] + src.suffix
         shutil.copy2(src, pub / name)
         return name
@@ -111,6 +118,9 @@ def main():
     out = Path(a.out).resolve()
     cmd = ["npx", "remotion"]
     if a.still is not None:
+        out = out.with_suffix(".png")  # a still is a PNG, never written under an .mp4 name
+        if not 0 <= a.still < len(spec["scenes"]):
+            sys.exit(f"--still {a.still}: the spec has scenes 0-{len(spec['scenes']) - 1}")
         fps = spec.get("fps", 30)
         default, overlap = (3.5, 14) if a.template == "pro" else (4, 0)
         dur = [round(s.get("seconds", default) * fps) for s in spec["scenes"]]
@@ -119,7 +129,10 @@ def main():
     else:
         cmd += ["render", "src/index.tsx", "Main", str(out), "--codec=h264"]
     cmd += [f"--props={props}", "--log=error"]
-    sys.exit(subprocess.run(cmd, cwd=PROJ, shell=os.name == "nt").returncode)
+    rc = subprocess.run(cmd, cwd=PROJ, shell=os.name == "nt").returncode
+    if rc == 0:
+        print(("Still: " if a.still is not None else "Video: ") + str(out))
+    sys.exit(rc)
 
 
 if __name__ == "__main__":
