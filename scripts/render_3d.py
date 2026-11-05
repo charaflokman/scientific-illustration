@@ -75,7 +75,8 @@ const mat = (c, o = 1) => new THREE.MeshPhysicalMaterial(Object.assign({color:c,
   transparent:o < 1, opacity:o, depthWrite:o >= 1, side: o < 1 ? THREE.DoubleSide : THREE.FrontSide},
   FIN.metal ? {metalness:1, roughness:0.18, clearcoat:0} : {}, FIN.glass ? {transmission:0.85, thickness:0.6, roughness:0.15, ior:1.35, transparent:false, opacity:1, depthWrite:true} : {},
   FIN.matte ? {roughness:0.85, clearcoat:0} : {}));
-const CPK = {H:'#f2f2f2', C:'#4a4a4a', N:'#3050f8', O:'#e8331f', S:'#ffd030', P:'#ff8000', Si:'#d9a066', Cl:'#1ff01f', Na:'#ab5cf2', Ca:'#3dff00', Ag:'#c0c0c0'};
+const CPK = {H:'#f2f2f2', C:'#4a4a4a', N:'#3050f8', O:'#e8331f', S:'#ffd030', P:'#ff8000', Si:'#d9a066', F:'#90e050', Cl:'#1ff01f', Br:'#a62929', I:'#940094', B:'#ffb5b5', Li:'#cc80ff', Na:'#ab5cf2', K:'#8f40d4', Mg:'#8aff00', Ca:'#3dff00', Al:'#bfa6a6', Ti:'#bfc2c7', Mn:'#9c7ac7', Fe:'#e06633', Co:'#f090a0', Ni:'#50d050', Cu:'#c88033', Zn:'#7d80b0', Se:'#ffa100', Zr:'#94e0e0', Ag:'#c0c0c0', Ce:'#e8e8b0', Pt:'#d0d0e0', Au:'#ffd123'};
+const cpk = e => CPK[e] || (console.warn('no CPK colour for ' + e), '#9aa0a6');
 const groups = {}, labels = [];
 const inRegion = (r, R) => [0,1,2].map(i => r[i] ? r[i][0] + R() * (r[i][1] - r[i][0]) : 0);
 function shadow(m){ m.traverse(o => { if (o.isMesh) { o.castShadow = true; o.receiveShadow = true; } }); return m; }
@@ -125,7 +126,7 @@ for (const o of SPEC.objects) {
   if (o.type === 'molecule') {
     const sc = o.scale || 1, at = o.atoms.map(a => new THREE.Vector3(a[1], a[2], a[3]).multiplyScalar(sc));
     const RAD = {H: .2, C: .32, N: .31, O: .3, S: .4, Si: .42, Cl: .38, P: .38, Ag: .5};
-    o.atoms.forEach((a, i) => { const m = new THREE.Mesh(new THREE.SphereGeometry((RAD[a[0]] || .35) * sc, 32, 20), mat(CPK[a[0]] || '#ff66cc')); m.position.copy(at[i]); g.add(m); });
+    o.atoms.forEach((a, i) => { const m = new THREE.Mesh(new THREE.SphereGeometry((RAD[a[0]] || .35) * sc, 32, 20), mat(cpk(a[0]))); m.position.copy(at[i]); g.add(m); });
     for (const [i, j, ord] of o.bonds || []) { const a = at[i], b = at[j], len = a.distanceTo(b), dir = b.clone().sub(a).normalize();
       const n = Math.round(ord || 1), side = new THREE.Vector3(0,0,1).cross(dir).normalize().multiplyScalar(.09*sc);
       for (let k = 0; k < n; k++) {  // double/triple bonds as parallel sticks

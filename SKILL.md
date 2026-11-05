@@ -59,7 +59,10 @@ Ask once, right after the tool check, before anything is drawn:
 | Needs | the user signed in to the AI | local tools only |
 
 **Route A steps:** the user names any image AI. Open it in Claude's built-in browser and ask them to sign in themselves;
-never ask for or type a password, and never pay or subscribe for them. Then follow "Route A: the AI draws, Claude does
+never ask for or type a password, and never pay or subscribe for them. **Verify the sign-in yourself before writing any prompt**:
+read the page in the browser tab you will use (an account avatar or name, a chat box that accepts input, no "Sign in"
+button) and do not rely on the user's word, because sign-ins do not always carry over between sessions or tabs. If
+the page still shows a sign-in button, tell the user what you see and wait. Then follow "Route A: the AI draws, Claude does
 everything else". If that AI fails (sign-in blocked, no image, no download), direct them to Gemini, the tested service.
 If Gemini fails too or they decline it, switch to Route B.
 
@@ -89,7 +92,8 @@ question the user's material already answers, and never ask more than once.
 7. **Format:** size (single 85 mm / double 180 mm / 16:9 / square), colour constraints (journal or lab palette),
    language of labels, deadline for a first draft.
 
-Then summarise the brief back in 3–4 lines ("Expert-level journal figure, 180 mm, specialists, message: …") and
+Then summarise the brief back in 3–4 lines, including the four look decisions (reference, palette, typeface,
+layout; see `references/style-profile.md`) ("Expert-level journal figure, 180 mm, specialists, message: …") and
 start. Defaults if they skip: journal, specialists, detailed, academic, double column.
 
 | | **Simple** | **Detailed** | **Expert / complex** |
@@ -195,9 +199,12 @@ The steps name Gemini, but they apply to any service. In its website, choose its
    it unchanged.
    Asking Gemini to remove text from an existing image failed in testing, while a new chat with a wordless scene description
    ("textless wordless illustration ... no words, no letters, no numbers, no labels") worked. Describe scenes only.
+   In Gemini, start the prompt with "Use your image generation tool." so it draws instead of replying with text.
 2. **Generate.** `python scripts/gemini_image.py prompt.txt -o draft.png` (`GEMINI_API_KEY`; the API needs billing). With no
    paid API, use the Gemini website in a browser where the user is signed in: pick the image tool, send the prompt,
-   download the full-size image. Stop for the user at any sign-in or payment step.
+   download the full-size image with the image's full-size download button (not a screenshot or the preview).
+   Then verify the file is new: its modified time is after the prompt was sent and its hash differs from every earlier
+   download, because a failed download once silently reused an old image. Stop for the user at any sign-in or payment step.
 3. **Check at full resolution, in crops.** Screen-sized previews hide errors. Read every word and report by location:
    - Spelling and invented words in all text.
    - Numbers, units and citations: each must match the source, and none may be invented.
@@ -255,7 +262,9 @@ steric-layer haze, optional `cutaway` (degrees) to open the shell towards the ca
 wrinkled translucent envelope, `pili`, `flagella`; `crystals` only when the material really is crystalline; molecules
 from SMILES with split-colour bonds. Lighting is a Poly Haven studio HDRI (`hdri`, CC0) plus soft key/fill/rim and
 reflection softboxes; `blur` and `focus` set depth of field; `background: null` gives a transparent PNG for insets;
-`shadow: false` for floating objects. Compose like a magazine render: one large hero object in focus, neighbours
+`shadow: false` for floating objects. The camera is fitted tightly to the projected scene (`fit`, default 1.06, is the
+margin), the contact shadow covers only the footprint (`shadowSize`, default 1.25), and tone mapping is AgX Punchy
+with `exposure` -0.25 (`look` overrides), so pale palettes do not wash out to grey-white. Compose like a magazine render: one large hero object in focus, neighbours
 behind it out of focus, nothing decorative that is not in the science (no stray rods or crystals "for looks").
 Molecular Nodes (Blender add-on, installed per machine) is the route for proteins and PDB/AlphaFold structures.
 
@@ -330,6 +339,8 @@ editable and accurate.
   labels sit next to what they name? Are the arrows going the right way? Anything that contradicts the source?
   Is there dead space or crowding? Iterate on the spec (usually 1–3 rounds) until it is clean.
 - Re-check every number and condition against the source.
+- Audit the "AI-look tells" list in `references/style-profile.md` (neon, purple gradients, emoji, uniform boxes,
+  marketing words) and remove any the client did not ask for.
 
 ### 5. Deliver
 - Final exports: `python scripts/export.py name.svg --png 600 --pdf`.

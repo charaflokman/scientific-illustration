@@ -45,6 +45,29 @@ client"); when the two disagree, the client's own profile wins.
   #2F6FAE accents); CPK colours only on atoms; at most one warm accent (drug or bacteria).
 - Soft high-key studio light, but with real contact shadows and depth of field so it reads as a photograph.
 
+## Decide the look before drawing (no defaults)
+
+Before the first render of a new visual, write four decisions, one line each, from the client profile, a reference
+image or the journal: (1) reference to match, (2) palette (hue family and the one accent, with the reason),
+(3) typeface (with the reason, e.g. the journal's own), (4) layout intent (hero, panels, flow). When the client gave
+no brief, state these choices to them instead of falling back silently on a default look.
+
+## AI-look tells (audit every visual before delivery)
+
+Clients and reviewers read these as "made by AI". Remove each one unless the client asked for it, and fix it with the
+figure's own palette, not another decorative colour:
+
+- Purple/indigo/violet as the main colour; gradients or gradient text that carry no meaning.
+- Neon glow, bloom halos, lens flares, sparkles around objects.
+- Emoji or generic clip-art in place of scientific art (use library art or RDKit molecules).
+- Identical rounding, shadows and card sizes everywhere; a centred title over three equal boxes as the whole layout.
+- Default fonts chosen for no reason; mixed type families.
+- Marketing words in labels ("unlock", "supercharge", "revolutionary", "next-generation").
+- Motion everywhere in videos: animate only what explains the science.
+
+Swapping one fashionable default for another (e.g. cream background with sage green) does not fix a tell.
+Adapted for figures from the community unslop-ui rules (github.com/JCarterJohnson/vibecoded-design-tells).
+
 ## Realism checklist (look at the render before showing it)
 
 - Would a macro photograph look like this? Perfectly clean, identical, evenly lit objects read as CG.

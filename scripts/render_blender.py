@@ -33,9 +33,22 @@ SPEC = json.load(open(args[0], encoding="utf-8"))
 OUT, W, H = args[1], int(args[2]), int(args[3])
 SAMPLES = int(args[4]) if len(args) > 4 else 192
 
+# Jmol CPK colours (C darkened for print); metals in their Jmol hue, never the pink "unknown" colour.
 CPK = {"H": "#f2f2f2", "C": "#4a4d55", "N": "#3b5bf0", "O": "#e8402a", "S": "#ffd030", "P": "#ff8000", "Si": "#e0a868",
-       "Cl": "#3fd04a", "Na": "#ab5cf2", "Ag": "#c8ccd2"}
-RAD = {"H": .2, "C": .32, "N": .32, "O": .31, "S": .4, "Si": .42, "Cl": .38, "P": .38, "Ag": .5}
+       "F": "#90e050", "Cl": "#3fd04a", "Br": "#a62929", "I": "#940094", "B": "#ffb5b5", "Li": "#cc80ff",
+       "Na": "#ab5cf2", "K": "#8f40d4", "Mg": "#8aff00", "Ca": "#3dff00", "Al": "#bfa6a6", "Ti": "#bfc2c7",
+       "Mn": "#9c7ac7", "Fe": "#e06633", "Co": "#f090a0", "Ni": "#50d050", "Cu": "#c88033", "Zn": "#7d80b0",
+       "Se": "#ffa100", "Zr": "#94e0e0", "Ag": "#c8ccd2", "Ce": "#e8e8b0", "Pt": "#d0d0e0", "Au": "#ffd123"}
+RAD = {"H": .2, "C": .32, "N": .32, "O": .31, "S": .4, "Si": .42, "Cl": .38, "P": .38, "Ag": .5,
+       "F": .3, "Br": .42, "I": .48, "B": .34, "Li": .45, "Na": .5, "K": .55, "Mg": .45, "Ca": .5, "Al": .45,
+       "Ti": .46, "Mn": .44, "Fe": .44, "Co": .43, "Ni": .43, "Cu": .44, "Zn": .44, "Se": .42, "Zr": .48,
+       "Ce": .52, "Pt": .48, "Au": .5}
+
+
+def cpk(e):
+    if e not in CPK:
+        print(f"warning: no CPK colour for element {e}; using neutral grey")
+    return CPK.get(e, "#9aa0a6")
 
 
 # -- seeded random, identical to the page: s = s * 16807 % (2^31 - 1) ---------------------------------------------
@@ -606,7 +619,7 @@ for o in SPEC["objects"]:
         at = [Vector(a[1:4]) * sc for a in o["atoms"]]
         el = [a[0] for a in o["atoms"]]
         for e, p in zip(el, at):
-            mb.sphere(mat(CPK.get(e, "#ff66cc"), "atom"), p, RAD.get(e, .35) * sc * az, 40)
+            mb.sphere(mat(cpk(e), "atom"), p, RAD.get(e, .35) * sc * az, 40)
         for bd in o.get("bonds", []):
             i, j = bd[0], bd[1]
             n = int(round(bd[2])) if len(bd) > 2 else 1
@@ -618,8 +631,8 @@ for o in SPEC["objects"]:
             for k in range(n):  # each half takes its atom's colour
                 off = side * ((k - (n - 1) / 2) * 1.6)
                 rb = (.055 if n > 1 else .085) * sc * az
-                mb.cyl(mat(CPK.get(el[i], "#ff66cc"), "atom"), a + off, mid + off, rb, 16)
-                mb.cyl(mat(CPK.get(el[j], "#ff66cc"), "atom"), mid + off, b + off, rb, 16)
+                mb.cyl(mat(cpk(el[i]), "atom"), a + off, mid + off, rb, 16)
+                mb.cyl(mat(cpk(el[j]), "atom"), mid + off, b + off, rb, 16)
     elif t == "corona":
         R0, L, n = o.get("radius", 1), o.get("length", .6), o.get("count", 120)
         Rr = Rnd(o.get("seed", 3))
@@ -685,10 +698,19 @@ cam_dir = Vector((cam_dir.x, -cam_dir.z, cam_dir.y)).normalized()  # y-up -> z-u
 cam = bpy.data.objects.new("cam", bpy.data.cameras.new("cam"))
 bpy.context.scene.collection.objects.link(cam)
 cam.data.lens = SPEC.get("lens", 70)
-fov = 2 * math.atan(cam.data.sensor_width / 2 / cam.data.lens) * (min(1, H / W) if W > H else 1)
-dist = radius / math.sin(fov / 2) * SPEC.get("fit", 1.15)
+cam.data.sensor_fit = "HORIZONTAL"
+cam.rotation_euler = (-cam_dir).to_track_quat("-Z", "Y").to_euler()
+# tight framing: project every bounding-box corner into the camera frame and back off until the widest one fits,
+# so the hero fills the picture instead of floating small inside a bounding sphere
+tx = math.tan(math.atan(cam.data.sensor_width / 2 / cam.data.lens))
+ty = tx * H / W
+inv = cam.rotation_euler.to_matrix().transposed()
+need = 0.0
+for p in pts:
+    q = inv @ (p - center)  # camera space, camera looks down -z
+    need = max(need, q.z + abs(q.x) / tx, q.z + abs(q.y) / ty)
+dist = need * SPEC.get("fit", 1.06)
 cam.location = center + cam_dir * dist
-cam.rotation_euler = (center - cam.location).to_track_quat("-Z", "Y").to_euler()
 cam.data.clip_end = dist * 10
 if SPEC.get("dof", True):
     # aperture as a fraction of the camera distance, so the blur looks the same at any scene scale
@@ -785,9 +807,15 @@ bpy.context.scene.world = world
 
 # soft contact shadow on an invisible floor (kept with a transparent background too)
 if SPEC.get("shadow", True):
-    gz = lo.z - .02 * radius
-    bpy.ops.mesh.primitive_plane_add(size=radius * 12, location=(center.x, center.y, gz))
-    bpy.context.active_object.is_shadow_catcher = True
+    # catcher only a little larger than the footprint: a huge catcher under broad lights gave a grey band that
+    # dwarfed the objects; `shadowSize` scales the margin
+    gz = lo.z - .01 * radius
+    m = SPEC.get("shadowSize", 1.25)
+    bpy.ops.mesh.primitive_plane_add(size=1, location=(center.x, center.y, gz))
+    pl = bpy.context.active_object
+    pl.scale = ((hi.x - lo.x) * m, (hi.y - lo.y) * m, 1)
+    pl.is_shadow_catcher = True
+    pl.visible_glossy = False
 
 sc = bpy.context.scene
 sc.render.engine = "CYCLES"
@@ -816,9 +844,14 @@ sc.render.image_settings.file_format = "PNG"
 sc.render.image_settings.color_mode = "RGBA"
 try:
     sc.view_settings.view_transform = "AgX"
-    sc.view_settings.look = "AgX - Medium High Contrast"
+    # "Punchy" keeps pale palettes from washing out to grey-white; a slight negative exposure keeps highlights
+    sc.view_settings.look = SPEC.get("look", "AgX - Punchy")
 except Exception:
-    pass
+    try:
+        sc.view_settings.look = "AgX - Medium High Contrast"
+    except Exception:
+        pass
+sc.view_settings.exposure = SPEC.get("exposure", -0.25)
 sc.render.filepath = OUT
 bpy.ops.render.render(write_still=True)
 print("BLENDER_PNG", OUT, sc.cycles.device)
